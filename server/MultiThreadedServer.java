@@ -8,7 +8,6 @@ import java.net.Socket;
  * @author yasgur99
  */
 public class MultiThreadedServer {
-
 	private ServerSocket serverSocket;
 	private int port;
 	private boolean running;
