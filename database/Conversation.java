@@ -19,7 +19,7 @@ public class Conversation implements java.io.Serializable {
 		this.recipientAddress = recipientAddress;
 		this.recpientName = recpientName;
 		this.fileName = fileName;
-		
+
 		//Save file on creation
 		try {
 			FileInputStream fileIn = new FileInputStream("/tmp/"+fileName+".ser"); //the location and name of the file
@@ -45,17 +45,18 @@ public class Conversation implements java.io.Serializable {
 	public String[] getRecipientName() {
 		return recipientName;
 	}
-	
+
 	public void saveThisObject() {
 		try {
 			FireOutputStream fileOut = new FileOutputStream("tmp/"+fileName+".ser");
-			ObjectOutputStream out =new ObjectOutputStream(fileOut);
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(this);
 			out.close();
 			fileOut.close();
 		} catch(IOException exception) {
 			exception.printStackTrace();
 		}
+	}
 
 	public void addEmail(String[] subject, String[] text) {
 		Email newEmail = new Email(senderAddress, recipientAddress, senderName, recipientName, subject, text);
