@@ -1,9 +1,26 @@
 public class SMTPParser {
-	private SMTPCommand parse(String line) {
-		String verb = line;
+	private String[] commands = {
+		"HELO",
+		"MAIL FROM",
+		"RCPT TO",
+		"DATA",
+		"RSET",
+		"VRFY",
+		"NOOP",
+		"QUIT"
+	};
 
-		if ( verb.indexOf(" ") > -1 ) {
-			verb = verb.substring(0, verb.indexOf(" "));
+	private SMTPCommand parse(String line) {
+		String verb = "";
+
+		for ( int i = 0; i < commands.length; i++ ) {
+			if ( commands[i].length() < line.length() && line.startsWith(commands[i]) ) {
+				verb = commands[i];
+			}
+		}
+
+		if ( verb.equals("") ) {
+			return null;
 		}
 
 		if ( verb.equals("HELO") ) {
