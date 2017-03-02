@@ -1,7 +1,7 @@
 import java.utils.*;
 import java.io.*;
 
-public class Conversation {
+public class Conversation implements java.io.Serializable {
 	/*
 	*The record of a chain of emails to a certain person with a certain subject line.
 	*Basically just an array
@@ -11,7 +11,7 @@ public class Conversation {
 	private String[] recipientAddress;
 	private String[] recipientName;
 	private String[] fileName;
-	ArrayList<Email> emailCollection = new ArrayList<Email>();
+	private ArrayList<Email> emailCollection = new ArrayList<Email>();
 
 	public Conversation(String[] fileName, String[] senderAddress, String[] senderName, String[] recipientAddress, String[] recipientName) {
 		this.senderAddress = senderAddress;
@@ -19,9 +19,10 @@ public class Conversation {
 		this.recipientAddress = recipientAddress;
 		this.recpientName = recpientName;
 		this.fileName = fileName;
-
+		
+		//Save file on creation
 		try {
-			FileInputStream fileIn = new FileInputStream("/tmp/"+fileName+".ser");
+			FileInputStream fileIn = new FileInputStream("/tmp/"+fileName+".ser"); //the location and name of the file
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			this = (Conversation) in.readObject();
 			in.close();
@@ -44,10 +45,8 @@ public class Conversation {
 	public String[] getRecipientName() {
 		return recipientName;
 	}
-
-	public void addEmail(String[] subject, String[] text) {
-		Email newEmail = new Email(senderAddress, recipientAddress, senderName, recipientName, subject, text);
-		emailCollection.add(newEmail);
+	
+	public void saveThisObject() {
 		try {
 			FireOutputStream fileOut = new FileOutputStream("tmp/"+fileName+".ser");
 			ObjectOutputStream out =new ObjectOutputStream(fileOut);
@@ -57,5 +56,10 @@ public class Conversation {
 		} catch(IOException exception) {
 			exception.printStackTrace();
 		}
+
+	public void addEmail(String[] subject, String[] text) {
+		Email newEmail = new Email(senderAddress, recipientAddress, senderName, recipientName, subject, text);
+		emailCollection.add(newEmail);
+		this.saveThisObject();
 	}
 }
