@@ -11,7 +11,7 @@ public class Conversation implements java.io.Serializable {
 	private String[] recipientAddress;
 	private String[] recipientName;
 	private String[] fileName;
-	ArrayList<Email> emailCollection = new ArrayList<Email>();
+	private ArrayList<Email> emailCollection = new ArrayList<Email>();
 
 	public Conversation(String[] fileName, String[] senderAddress, String[] senderName, String[] recipientAddress, String[] recipientName) {
 		this.senderAddress = senderAddress;
