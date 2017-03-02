@@ -1,5 +1,4 @@
 public class SMTPParser {
-
 	private SMTPCommand parse(String line) {
 		String verb = line;
 

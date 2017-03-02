@@ -1,0 +1,8 @@
+HELO [name]
+MAIL FROM:<from>
+RCPT TO:<to>
+DATA
+RSET
+VRFY
+NOOP
+QUIT
