@@ -10,6 +10,7 @@ public class SMTPParser {
 		"QUIT"
 	};
 
+	// Parses the SMTP lines into a command
 	public SMTPCommand parse(String line) {
 		String verb = "";
 
