@@ -20,14 +20,42 @@ public class SMTPParser {
 			}
 		}
 
-		if ( verb.equals("") ) {
-			return null;
-		}
-
 		if ( verb.equals("HELO") ) {
 			SMTPHelloCommand cmd = new SMTPHelloCommand();
 			cmd.parse(line);
 			return (SMTPCommand) cmd;
 		}
+
+		if ( verb.equals("MAIL FROM") ) {
+
+		}
+
+		if ( verb.equals("RCPT TO") ) {
+
+		}
+
+		if ( verb.equals("DATA") ) {
+			SMTPDataCommand cmd = new SMTPDataCommand();
+			cmd.parse(line);
+			return (SMTPCommand) cmd;
+		}
+
+		if ( verb.equals("RSET") ) {
+
+		}
+
+		if ( verb.equals("VRFY") ) {
+
+		}
+
+		if ( verb.equals("NOOP") ) {
+
+		}
+
+		if ( verb.equals("QUIT") ) {
+
+		}
+
+		return null;
 	}
 }
