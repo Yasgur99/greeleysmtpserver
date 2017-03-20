@@ -56,7 +56,11 @@ public class ClientHandler implements Runnable {
     try {
       String line = in.readLine();
       System.out.println("Client: " + line);
-      //TODO: send input to central object
+      /*Get parsed SMTP command and execute it*/
+      STMPParser p = new SMTPParser();
+      String command = p.parse();
+      CommandExecutor c = new CommandExecutor(command);
+      c.execute();
     } catch (IOException ex) {
       System.out.println("IOException reading the clients message");
     }
