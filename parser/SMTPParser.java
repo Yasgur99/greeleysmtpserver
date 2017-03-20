@@ -31,7 +31,9 @@ public class SMTPParser {
 		}
 
 		if ( verb.equals("RCPT TO") ) {
-
+			SMTPRcptCommand cmd = new SMTPRcptCommand();
+			cmd.parse(line);
+			return (SMTPCommand) cmd;
 		}
 
 		if ( verb.equals("DATA") ) {
