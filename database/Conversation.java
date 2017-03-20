@@ -2,7 +2,7 @@ import java.utils.*;
 import java.io.*;
 
 public class Conversation implements java.io.Serializable {
-	/*
+	/**
 	*The record of a chain of emails to a certain person with a certain subject line.
 	*Basically just an array
 	*/
