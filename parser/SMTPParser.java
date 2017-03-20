@@ -10,8 +10,23 @@ public class SMTPParser {
 		"QUIT"
 	};
 
+	private SMTPDataCommand parsingData = null;
+
 	// Parses the SMTP lines into a command
 	public SMTPCommand parse(String line) {
+		if ( parsingData != null ) {
+			if ( line.equals(".") ) {
+				SMTPDataCommand tmp = this.parsingData;
+				tmp.setDone(true);
+				this.parsingData = null;
+				return (SMTPCommand) tmp;
+			}
+			else {
+				this.parsingData.addData(line);
+				return this.parsingData;
+			}
+		}
+
 		String verb = "";
 
 		for ( int i = 0; i < commands.length; i++ ) {
@@ -37,9 +52,9 @@ public class SMTPParser {
 		}
 
 		if ( verb.equals("DATA") ) {
-			SMTPDataCommand cmd = new SMTPDataCommand();
-			cmd.parse(line);
-			return (SMTPCommand) cmd;
+			this.parsingData = new SMTPDataCommand();
+			this.parsingData.setDone(false);
+			return this.parsingData;
 		}
 
 		if ( verb.equals("RSET") ) {
