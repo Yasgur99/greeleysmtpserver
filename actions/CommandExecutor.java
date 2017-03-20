@@ -3,15 +3,17 @@ package greeleysmtpserver;
  * @author michaelmaitland
  */
 
-public  class CommandExecutor {
+ import greeleysmtpserver.parser.SMTPCommand;
 
-    private String command;
-    
-    public CommandExecutor(String command){
+public class CommandExecutor {
+
+    private SMTPCommand command;
+
+    public CommandExecutor(SMTPCommand command){
         this.command = command;
     }
-    
-    public void execute(){
-        
+
+    public String execute(){
+
     }
 }
