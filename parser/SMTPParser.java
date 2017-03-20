@@ -42,7 +42,9 @@ public class SMTPParser {
 		}
 
 		if ( verb.equals("MAIL FROM") ) {
-
+			SMTPMailFromCommand cmd = new SMTPMailFromCommand();
+			cmd.parse(line);
+			return (SMTPCommand) cmd;
 		}
 
 		if ( verb.equals("RCPT TO") ) {
