@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 // NOTE: this code taken from the HELO commmand - make sure this works.
 // HOW DO THIS??? makes the server to reset all its state tables and buffers
@@ -6,15 +7,27 @@
 public class SMTPHelloCommand extends SMTPCommand {
 
 	private String hostname;
+=======
+public class SMTPMailFromCommand extends SMTPCommand {
+	private String from;
+>>>>>>> 6fbe7975314cd16c956414b720adb04f0b293504
 
 	SMTPMailFromCommand() {
 		this.extended = false;
 	}
 
+<<<<<<< HEAD
 	// MAIL FROM <hostname>
 	public void parse(String line) {
 		if ( line.indexOf(" ") > -1 ) {
 			hostname = line.substring(line.indexOf("MAIL FROM") + 11, line.length()-1);
+=======
+	// MAIL FROM:<yyyy@example.com>
+	public void parse(String line) {
+		if ( line.indexOf(":") > -1 ) {
+			from = line.substring(line.indexOf(":"), line.length()).trim();
+			from = from.substring(1, from.length() - 1);
+>>>>>>> 6fbe7975314cd16c956414b720adb04f0b293504
 		}
 	}
 
@@ -22,6 +35,7 @@ public class SMTPHelloCommand extends SMTPCommand {
 		return "MAIL FROM";
 	}
 
+<<<<<<< HEAD
 	public String getHostName() {
 		return hostname;
 	}
@@ -33,3 +47,9 @@ public class SMTPHelloCommand extends SMTPCommand {
 		return "250 OK";
 	}
 }
+=======
+	public String getFrom() {
+		return from;
+	}
+}
+>>>>>>> 6fbe7975314cd16c956414b720adb04f0b293504

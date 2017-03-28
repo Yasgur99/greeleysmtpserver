@@ -10,18 +10,29 @@ public class SMTPParser {
 		"QUIT"
 	};
 
+	private SMTPDataCommand parsingData = null;
+
 	// Parses the SMTP lines into a command
 	public SMTPCommand parse(String line) {
+		if ( parsingData != null ) {
+			if ( line.equals(".") ) {
+				SMTPDataCommand tmp = this.parsingData;
+				tmp.setDone(true);
+				this.parsingData = null;
+				return (SMTPCommand) tmp;
+			}
+			else {
+				this.parsingData.addData(line);
+				return this.parsingData;
+			}
+		}
+
 		String verb = "";
 
 		for ( int i = 0; i < commands.length; i++ ) {
 			if ( commands[i].length() < line.length() && line.startsWith(commands[i]) ) {
 				verb = commands[i];
 			}
-		}
-
-		if ( verb.equals("") ) {
-			return null;
 		}
 
 		if ( verb.equals("HELO") ) {
@@ -43,8 +54,5 @@ public class SMTPParser {
 			return (SMTPCommand) object; 
 
 		}
-
-
-	)
 	}
 }
