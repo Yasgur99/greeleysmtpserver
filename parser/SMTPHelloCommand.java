@@ -8,7 +8,7 @@ public class SMTPHelloCommand extends SMTPCommand {
 	// HELO <hostname>
 	public void parse(String line) {
 		if ( line.indexOf(" ") > -1 ) {
-			hostname = line.substring(line.indexOf(" "), line.length());
+			hostname = line.substring(line.indexOf(" ") +1 , line.length());
 		}
 	}
 
