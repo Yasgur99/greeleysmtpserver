@@ -41,22 +41,24 @@ public class SMTPParser {
 			return (SMTPCommand) cmd;
 		}
 
-		if ( verb.equals("MAIL FROM") ) {
-			SMTPMailFromCommand cmd = new SMTPMailFromCommand();
-			cmd.parse(line);
-			return (SMTPCommand) cmd;
+		if (verb.equals("MAIL FROM")) {
+			SMTPMailFromCommand object = new SMTPMailFromCommand();
+			object.parse(line);
+			return (SMTPCommand) object;
+
 		}
 
-		if ( verb.equals("RCPT TO") ) {
-			SMTPRcptCommand cmd = new SMTPRcptCommand();
-			cmd.parse(line);
-			return (SMTPCommand) cmd;
+		if (verb.equals("MAIL FROM")) {
+			SMTPRcptCommand object = new SMTPRcptCommand();
+			object.parse(line);
+			return (SMTPCommand) object;
+
 		}
 
 		if ( verb.equals("DATA") ) {
-			this.parsingData = new SMTPDataCommand();
-			this.parsingData.setDone(false);
-			return this.parsingData;
+		    this.parsingData = new SMTPDataCommand();
+		    this.parsingData.setDone(false);
+		    return this.parsingData;
 		}
 
 		if ( verb.equals("RSET") ) {
@@ -75,6 +77,5 @@ public class SMTPParser {
 
 		}
 
-		return null;
 	}
 }
