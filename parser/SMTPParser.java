@@ -29,5 +29,22 @@ public class SMTPParser {
 			cmd.parse(line);
 			return (SMTPCommand) cmd;
 		}
+
+		if (verb.equals("MAIL FROM")) {
+			SMTPMailFromCommand object = new SMTPMailFromCommand; 
+			object.parse(line); 
+			return (SMTPCommand) object; 
+
+		}
+
+		if (verb.equals("MAIL FROM")) {
+			SMTPRcptToCommnand object = new SMTPRcptToCommnand; 
+			object.parse(line); 
+			return (SMTPCommand) object; 
+
+		}
+
+
+	)
 	}
 }
