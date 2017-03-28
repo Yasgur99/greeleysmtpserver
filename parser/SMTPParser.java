@@ -42,17 +42,40 @@ public class SMTPParser {
 		}
 
 		if (verb.equals("MAIL FROM")) {
-			SMTPMailFromCommand object = new SMTPMailFromCommand; 
-			object.parse(line); 
-			return (SMTPCommand) object; 
+			SMTPMailFromCommand object = new SMTPMailFromCommand();
+			object.parse(line);
+			return (SMTPCommand) object;
 
 		}
 
 		if (verb.equals("MAIL FROM")) {
-			SMTPRcptToCommnand object = new SMTPRcptToCommnand; 
-			object.parse(line); 
-			return (SMTPCommand) object; 
+			SMTPRcptCommand object = new SMTPRcptCommand();
+			object.parse(line);
+			return (SMTPCommand) object;
 
 		}
+
+		if ( verb.equals("DATA") ) {
+		    this.parsingData = new SMTPDataCommand();
+		    this.parsingData.setDone(false);
+		    return this.parsingData;
+		}
+
+		if ( verb.equals("RSET") ) {
+
+		}
+
+		if ( verb.equals("VRFY") ) {
+
+		}
+
+		if ( verb.equals("NOOP") ) {
+
+		}
+
+		if ( verb.equals("QUIT") ) {
+
+		}
+
 	}
 }
