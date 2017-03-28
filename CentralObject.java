@@ -11,5 +11,5 @@ public class CentralObject {
        MultiThreadedServer server = new MultiThreadedServer(4444);
        server.run();
    }
-    
+
 }

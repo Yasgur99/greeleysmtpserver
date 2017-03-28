@@ -58,7 +58,7 @@ public class ClientHandler implements Runnable {
             CommandExecutor executor = new CommandExecutor();
             String line = null;
 
-            while (p.parse(line) != "QUIT") {
+            while (p.parse(line).equals("QUIT") {
                 line = in.readLine();
                 System.out.println("Client: " + line);
                 /*Get parsed SMTP command and execute it*/
