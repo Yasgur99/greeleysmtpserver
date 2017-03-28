@@ -76,6 +76,6 @@ public class SMTPParser {
 		if ( verb.equals("QUIT") ) {
 
 		}
-
+		return null;
 	}
 }
