@@ -1,4 +1,5 @@
 HELO [name]
+AUTH LOGIN
 MAIL FROM:<from>
 RCPT TO:<to>
 DATA
