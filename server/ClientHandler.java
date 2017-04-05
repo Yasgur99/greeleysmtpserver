@@ -12,12 +12,12 @@ import java.net.Socket;
 /**
  * @author yasgur99
  */
-public class ClientHandler implements Runnable {
+public class ClientHandler implements Callable<Void> {
 
     private Socket connection;
     private Boolean running;
-    private BufferedReader in;
-    private PrintWriter out;
+    private Reader in;
+    private Writer out;
 
     public ClientHandler(Socket connection, Boolean running) {
         this.connection = connection;
@@ -25,7 +25,7 @@ public class ClientHandler implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void call() {
         setupStreams();
         readClientMessage();
         closeConnection();
@@ -36,7 +36,7 @@ public class ClientHandler implements Runnable {
             this.in = new BufferedReader(
                     new InputStreamReader(
                             this.connection.getInputStream()));
-            System.out.println("Input stream setup");
+            System.out.println("Input stream is setup");
         } catch (IOException ex) {
             System.out.println("IOException setting up input stream");
         }

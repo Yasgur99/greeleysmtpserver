@@ -8,6 +8,9 @@ import java.net.Socket;
  * @author yasgur99
  */
 public class MultiThreadedServer {
+
+	private final static int POOL_SIZE = 50;
+
 	private ServerSocket serverSocket;
 	private int port;
 	private boolean running;
@@ -20,25 +23,26 @@ public class MultiThreadedServer {
 	public void start() {
     	this.running = true;
     	initServer();
-    	makeConnection();
     	closeDownServer();
 	}
 
 	private void initServer() {
-    	try {
-        	this.serverSocket = new ServerSocket(port);
+    	try(this.serverSocket = new ServerSocket(port)) {
+        	makeConnection();
     	} catch (IOException ex) {
         	System.out.println("Could not create serverSocket on port " + port);
     	}
 	}
 
 	private void makeConnection() {
-    	while (running) {
+		ExecutorService pool = Executors.newFixedThreadPool(POOL_SIZE);
+			while (running) {
         	try {
             	Socket newClient = this.serverSocket.accept();
-            	new Thread(new ClientHandler(newClient)).start();
+            	Callable<Void> task = new ClientHandler(newClient);
+							pool.submit(task);
         	} catch (IOException ex) {
-            	System.out.println("IOException accepting a connection");
+            	System.out.println("Issue with connection with client...");
         	}
     	}
 	}
