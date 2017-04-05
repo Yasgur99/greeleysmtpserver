@@ -1,10 +1,10 @@
-package greeleysmtpserver;
+package greeleysmtpserver.actions;
 
 /**
  * @author michaelmaitland
  */
 
-import greeleysmtpserver.parser.SMTPCommand;
+import greeleysmtpserver.parser.*;
 
 public class CommandExecutor {
 

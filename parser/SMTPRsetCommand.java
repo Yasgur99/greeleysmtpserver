@@ -1,8 +1,10 @@
+package greeleysmtpserver.parser;
 
-public class SMTPResetCommand extends SMTPCommand {
+public class SMTPRsetCommand extends SMTPCommand {
 	private String hostname;
+        private boolean extended;
 
-	SMTPHelloCommand() {
+	SMTPRsetCommand() {
 		this.extended = false;
 	}
 
