@@ -1,9 +1,10 @@
-
 package greeleysmtpserver;
+
 /**
  * @author michaelmaitland
  */
-import server.MultiThreadedServer;
+import greeleysmtpserver.server.MultiThreadedServer;
+
 public class CentralObject {
 
    public static void main(String[] args){

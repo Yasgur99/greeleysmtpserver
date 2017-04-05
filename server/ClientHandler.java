@@ -1,13 +1,10 @@
-package greeleysmtpserver;
+package greeleysmtpserver.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.Callable;
+import greeleysmtpserver.parser.*;
+import greeleysmtpserver.responder.*;
 
 /**
  * @author yasgur99
@@ -25,10 +22,16 @@ public class ClientHandler implements Callable<Void> {
     }
 
     @Override
-    public void call() {
+    public Void call() {
         setupStreams();
-        readClientMessage();
+        /*Continously get instructions from client*/
+        while (true) {
+            SMTPResponse response = readClientMessage(); //get input and parse it
+            writeResponse(response); //send our resposne to client
+            if (response.getCode() == 221) break; //Check if we are done talking to client
+        }
         closeConnection();
+        return null;
     }
 
     private void setupStreams() {
@@ -38,7 +41,7 @@ public class ClientHandler implements Callable<Void> {
                             this.connection.getInputStream()));
             System.out.println("Input stream is setup");
         } catch (IOException ex) {
-            System.out.println("IOException setting up input stream");
+            System.err.println("IOException setting up input stream");
         }
 
         try {
@@ -48,27 +51,37 @@ public class ClientHandler implements Callable<Void> {
             System.out.println("Output stream setup");
             this.out.write("Connection with server has been made");
         } catch (IOException ex) {
-            System.out.println("IOException setting up output stream");
+            System.err.println("IOException setting up output stream");
         }
     }
 
-    private void readClientMessage() {
-        try {
-            STMPParser p = new SMTPParser();
-            CommandExecutor executor = new CommandExecutor();
-            String line = null;
-
-            while (p.parse(line).equals("QUIT") {
-                line = in.readLine();
-                System.out.println("Client: " + line);
-                /*Get parsed SMTP command and execute it*/
-                String response = executor.execute(p.parse());
-                this.out.write(response);
-                if(response.contains("221 ") &&
-                        response.contains("closing connection"))break; //Check if we are done
+    private SMTPResponse readClientMessage() {
+        SMTPParser parser = new SMTPParser();
+        while (true) {
+            /*Read line in from client*/
+            StringBuilder line = new StringBuilder();
+            try {
+                int c;
+                while ((c = in.read()) != -1)
+                    line.append((char) c);
+            } catch (IOException ex) {
+                System.err.println("IOException while reading the clients mesasge");
             }
-        } catch (IOException ex) {
-            System.out.println("IOException reading the clients message");
+
+            /*Handle line*/
+            System.out.println("Client: " + line);
+            /*Get parsed SMTP command and execute it*/
+            return CommandExecutor.execute(parser.parse(line.toString()));
+
+        }
+    }
+
+    private void writeResponse(SMTPResponse response) {
+        try {
+            this.out.write(response.toString());
+            this.out.flush();
+        }catch(IOException ex){
+            System.err.printf("IOException while sending response to client");
         }
     }
 
@@ -80,7 +93,7 @@ public class ClientHandler implements Callable<Void> {
             this.out.close();
             this.connection.close();
         } catch (IOException ex) {
-            System.out.println("IOException closing resources");
+            System.err.println("IOException closing resources");
         }
     }
 }

@@ -1,10 +1,14 @@
 package greeleysmtpserver.parser;
 
-public class SMTPVrfyCommand extends SMTPCommand {
+public class SMTPHeloCommand extends SMTPCommand {
 
     private String hostname;
 
-    //Example: VRFY hostname
+    SMTPHeloCommand() {
+        this.extended = false;
+    }
+
+    // HELO <hostname>
     public void parse(String line) {
         if (line.indexOf(" ") > -1) {
             hostname = line.substring(line.indexOf(" ") + 1, line.length());
@@ -12,10 +16,10 @@ public class SMTPVrfyCommand extends SMTPCommand {
     }
 
     public String getCommandName() {
-        return "VRFY";
+        return "HELO";
     }
 
-    public String gethostname() {
+    public String getHostName() {
         return hostname;
     }
 }

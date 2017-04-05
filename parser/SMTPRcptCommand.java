@@ -1,8 +1,10 @@
+package greeleysmtpserver.parser;
+
 public class SMTPRcptCommand extends SMTPCommand {
 	private String from;
 
 	SMTPRcptCommand() {
-		this.extended = false;
+		extended = false;
 	}
 
 	// RCPT TO:<yyyy@example.com>

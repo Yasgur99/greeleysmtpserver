@@ -1,33 +1,36 @@
+package greeleysmtpserver.parser;
+
 public class SMTPDataCommand extends SMTPCommand {
-	private String data;
-	private boolean done;
 
-	SMTPDataCommand() {
-		this.extended = false;
-	}
+    private String data;
+    private boolean done;
 
-	// DATA ...
-	public void parse(String line) {
-		// nothing to parse
-	}
+    SMTPDataCommand() {
+        this.extended = false;
+    }
 
-	public void addData(String data) {
-		this.data = this.data + data;
-	}
+    // DATA ...
+    public void parse(String line) {
+        // nothing to parse
+    }
 
-	public String getCommandName() {
-		return "DATA";
-	}
+    public void addData(String data) {
+        this.data = this.data + data;
+    }
 
-	public void setDone(boolean done) {
-		this.done = done;
-	}
+    public String getCommandName() {
+        return "DATA";
+    }
 
-	public boolean isDone() {
-		return done;
-	}
+    public void setDone(boolean done) {
+        this.done = done;
+    }
 
-	public String getData() {
-		return data;
-	}
+    public boolean isDone() {
+        return done;
+    }
+
+    public String getData() {
+        return data;
+    }
 }
