@@ -13,7 +13,7 @@ public class ClientHandler implements Callable<Void> {
 
     private Socket connection;
     private Boolean running;
-    private Reader in;
+    private BufferedReader in;
     private Writer out;
 
     public ClientHandler(Socket connection, Boolean running) {
@@ -27,6 +27,7 @@ public class ClientHandler implements Callable<Void> {
         /*Continously get instructions from client*/
         while (true) {
             SMTPResponse response = readClientMessage(); //get input and parse it
+            if(response == null) continue;
             writeResponse(response); //send our resposne to client
             if (response.getCode() == 221) break; //Check if we are done talking to client
         }
@@ -57,30 +58,22 @@ public class ClientHandler implements Callable<Void> {
 
     private SMTPResponse readClientMessage() {
         SMTPParser parser = new SMTPParser();
-        while (true) {
-            /*Read line in from client*/
-            StringBuilder line = new StringBuilder();
-            try {
-                int c;
-                while ((c = in.read()) != -1)
-                    line.append((char) c);
-            } catch (IOException ex) {
-                System.err.println("IOException while reading the clients mesasge");
-            }
+        String line = null;
 
-            /*Handle line*/
-            System.out.println("Client: " + line);
-            /*Get parsed SMTP command and execute it*/
+        try {
+            line = in.readLine();
             return CommandExecutor.execute(parser.parse(line.toString()));
-
+        } catch (IOException ex) {
+            System.err.println("IOException reading line from client");
         }
+        return null;
     }
 
     private void writeResponse(SMTPResponse response) {
         try {
-            this.out.write(response.toString());
+            this.out.write(response.toString() + "\n");
             this.out.flush();
-        }catch(IOException ex){
+        } catch (IOException ex) {
             System.err.printf("IOException while sending response to client");
         }
     }
