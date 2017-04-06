@@ -5,15 +5,17 @@ package greeleysmtpserver.parser;
  */
 
 public class SMTPInvalidCommand extends SMTPCommand {
+    
+    public SMTPInvalidCommand(){
+        this.extended = false;
+    }
 
     @Override
     public String getCommandName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "Invalid Command";
     }
 
     @Override
     public void parse(String line) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }

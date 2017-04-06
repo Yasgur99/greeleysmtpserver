@@ -6,8 +6,6 @@ package greeleysmtpserver.responder;
 import greeleysmtpserver.parser.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CommandExecutor {
 
@@ -36,8 +34,10 @@ public class CommandExecutor {
         } else if (command.getCommandName().equals("QUIT")) {
             SMTPQuitCommand quitCommand = (SMTPQuitCommand) command;
             return executeQuit(quitCommand);
+        } else {
+            SMTPInvalidCommand invalidCommand = (SMTPInvalidCommand) command;
+            return executeInvalid(invalidCommand);
         }
-        return null; //eventually return an invalid command
     }
 
     private static SMTPResponse executeHelo(SMTPHeloCommand heloCommand) {
@@ -46,7 +46,7 @@ public class CommandExecutor {
         if (heloCommand.getHostName() == null || heloCommand.getHostName().equals("")) {
             response.setCode(Codes.SYNTAX_ERROR_PARAMETERS);
             response.setMessage("Syntax error in command parameters");
-        } else{
+        } else {
             response.setCode(Codes.REQUESTED_ACTION_OKAY);
             try {
                 String serverIP = InetAddress.getLocalHost().getHostAddress();
@@ -85,6 +85,10 @@ public class CommandExecutor {
     }
 
     private static SMTPResponse executeQuit(SMTPQuitCommand quitCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new SMTPResponse(221, "Bye!");
+    }
+
+    private static SMTPResponse executeInvalid(SMTPInvalidCommand invalidCommand) {
+        return new SMTPResponse(500, "Invalid Command");
     }
 }

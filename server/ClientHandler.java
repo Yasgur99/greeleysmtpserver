@@ -50,7 +50,7 @@ public class ClientHandler implements Callable<Void> {
                     new OutputStreamWriter(
                             this.connection.getOutputStream()));
             System.out.println("Output stream setup");
-            this.out.write("Connection with server has been made");
+            this.out.write("Connection with server has been made\n");
         } catch (IOException ex) {
             System.err.println("IOException setting up output stream");
         }
@@ -62,11 +62,11 @@ public class ClientHandler implements Callable<Void> {
 
         try {
             line = in.readLine();
-            return CommandExecutor.execute(parser.parse(line.toString()));
+            return CommandExecutor.execute(parser.parse(line));
         } catch (IOException ex) {
             System.err.println("IOException reading line from client");
         }
-        return null;
+        return new SMTPResponse(500, "Invalid command");
     }
 
     private void writeResponse(SMTPResponse response) {

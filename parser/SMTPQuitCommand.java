@@ -13,7 +13,6 @@ public class SMTPQuitCommand extends SMTPCommand {
 
     @Override
     public void parse(String line) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

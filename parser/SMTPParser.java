@@ -32,52 +32,36 @@ public class SMTPParser {
         String verb = "";
 
         for (int i = 0; i < commands.length; i++) {
-            if (commands[i].length() < line.length() && line.startsWith(commands[i])) {
+            if (commands[i].length() <= line.length() && line.startsWith(commands[i])) {
                 verb = commands[i];
             }
         }
 
         if (verb.equals("HELO")) {
-            SMTPHeloCommand cmd = new SMTPHeloCommand();
-            cmd.parse(line);
-            return (SMTPCommand) cmd;
-        }
-
-        if (verb.equals("MAIL FROM")) {
-            SMTPMailFromCommand object = new SMTPMailFromCommand();
-            object.parse(line);
-            return (SMTPCommand) object;
-
-        }
-
-        if (verb.equals("MAIL FROM")) {
-            SMTPRcptCommand object = new SMTPRcptCommand();
-            object.parse(line);
-            return (SMTPCommand) object;
-
-        }
-
-        if (verb.equals("DATA")) {
+            SMTPCommand heloCommand = new SMTPHeloCommand();
+            heloCommand.parse(line);
+            return heloCommand;
+        } else if (verb.equals("MAIL FROM")) {
+            SMTPCommand mailFromCommand = new SMTPMailFromCommand();
+            mailFromCommand.parse(line);
+            return mailFromCommand;
+        } else if (verb.equals("MAIL FROM")) {
+            SMTPCommand rcptToCommand = new SMTPRcptCommand();
+            rcptToCommand.parse(line);
+            return (SMTPCommand) rcptToCommand;
+        } else if (verb.equals("DATA")) {
             this.parsingData = new SMTPDataCommand();
             this.parsingData.setDone(false);
             return this.parsingData;
-        }
+        } else if (verb.equals("RSET")) {
 
-        if (verb.equals("RSET")) {
+        } else if (verb.equals("VRFY")) {
 
-        }
+        } else if (verb.equals("NOOP")) {
 
-        if (verb.equals("VRFY")) {
-
-        }
-
-        if (verb.equals("NOOP")) {
-
-        }
-
-        if (verb.equals("QUIT")) {
-
-        }
-        return null;
+        } else if (verb.equals("QUIT")) {
+            return new SMTPQuitCommand();
+        } 
+            return new SMTPInvalidCommand();
     }
 }
