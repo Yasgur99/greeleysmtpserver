@@ -61,23 +61,33 @@ public class CommandExecutor {
     }
 
     private static SMTPResponse executeMailFrom(SMTPMailFromCommand mailFromCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SMTPResponse response = new SMTPResponse();
+        //TODO: implement MAIL FROM response
+        return response;
     }
 
     private static SMTPResponse executeRcptTo(SMTPRcptCommand rcptToCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SMTPResponse response = new SMTPResponse();
+        //TODO: implement RCPT TO Response
+        return response;
     }
 
     private static SMTPResponse executeData(SMTPDataCommand dataCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SMTPResponse response = new SMTPResponse();
+        //TODO: implement DATA response
+        return response;
     }
 
     private static SMTPResponse executeRset(SMTPRsetCommand rsetCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SMTPResponse response = new SMTPResponse();
+        //TODO: implement RSET response
+        return response;
     }
 
     private static SMTPResponse executeVrfy(SMTPVrfyCommand vrfyCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SMTPResponse response = new SMTPResponse();
+        //TODO: implement VRFY response
+        return response;
     }
 
     private static SMTPResponse executeNoop(SMTPNoopCommand noopCommand) {

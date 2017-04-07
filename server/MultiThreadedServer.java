@@ -51,7 +51,7 @@ public class MultiThreadedServer {
             try {
                 Socket newClient = this.serverSocket.accept();
                 try {
-                    newClient.setSoTimeout(5000);
+                    newClient.setSoTimeout(30000);
                 } catch (SocketException ex) {
                 }
                 Callable<Void> task = new ClientHandler(newClient);
