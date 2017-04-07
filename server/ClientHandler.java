@@ -5,88 +5,104 @@ import java.net.Socket;
 import java.util.concurrent.Callable;
 import greeleysmtpserver.parser.*;
 import greeleysmtpserver.responder.*;
+import java.net.SocketTimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author yasgur99
  */
 public class ClientHandler implements Callable<Void> {
 
-    private Socket connection;
-    private Boolean running;
-    private BufferedReader in;
-    private Writer out;
+    private final static Logger requestLogger = Logger.getLogger("requests");
+    private final static Logger errorLogger = Logger.getLogger("errors");
 
-    public ClientHandler(Socket connection, Boolean running) {
+    private Socket connection;
+    private BufferedReader in;
+    private PrintWriter out;
+    private boolean connected;
+
+    public ClientHandler(Socket connection) {
         this.connection = connection;
-        this.running = running;
+        this.connected = true;
+        requestLogger.info("Connection opened with " + connection.getInetAddress().getHostAddress());
     }
 
     @Override
     public Void call() {
         setupStreams();
-        /*Continously get instructions from client*/
-        while (true) {
+        //TODO: check to make sure streams are setup
+
+        /*Continously get instructions from client while connection is open*/
+        while (connected) {
             SMTPResponse response = readClientMessage(); //get input and parse it
-            if(response == null) continue;
-            writeResponse(response); //send our resposne to client
-            if (response.getCode() == 221) break; //Check if we are done talking to client
+            if (response == null) break; //returns null if bad input (such as client disconnected)
+            writeResponse(response);//send our resposne to client
+            if (response.getCode() == 221) { //check to see if client asked to quit
+                this.connected = false;
+                break;
+            }
         }
         closeConnection();
         return null;
     }
 
-    private void setupStreams() {
+    private boolean setupStreams() {
         try {
             this.in = new BufferedReader(
                     new InputStreamReader(
                             this.connection.getInputStream()));
-            System.out.println("Input stream is setup");
-        } catch (IOException ex) {
-            System.err.println("IOException setting up input stream");
-        }
-
-        try {
             this.out = new PrintWriter(
                     new OutputStreamWriter(
                             this.connection.getOutputStream()));
-            System.out.println("Output stream setup");
             this.out.write("Connection with server has been made\n");
+            this.out.flush();
+            return true;
         } catch (IOException ex) {
-            System.err.println("IOException setting up output stream");
+            this.connected = false;
+        } catch (RuntimeException rex) {
+            errorLogger.log(Level.SEVERE, "Error opening streams" + rex.getLocalizedMessage(), rex);
         }
+        return false;
     }
 
     private SMTPResponse readClientMessage() {
-        SMTPParser parser = new SMTPParser();
-        String line = null;
-
+        String line;
         try {
-            line = in.readLine();
-            return CommandExecutor.execute(parser.parse(line));
-        } catch (IOException ex) {
-            System.err.println("IOException reading line from client");
+            line = in.readLine(); //try and read line from server
+            if (line != null) {
+                line = line.trim();
+                return CommandExecutor.execute(new SMTPParser().parse(line));
+            }
+        } catch (IOException ex) { //error reading
+            this.connected = false;
+        } catch (RuntimeException rex) { //we read in nothing
+            errorLogger.log(Level.SEVERE, "Unexpected error reading client message" + rex.getLocalizedMessage(), rex);
+            this.connected = false;
         }
-        return new SMTPResponse(500, "Invalid command");
+        return null;
+
     }
 
     private void writeResponse(SMTPResponse response) {
         try {
             this.out.write(response.toString() + "\n");
             this.out.flush();
-        } catch (IOException ex) {
-            System.err.printf("IOException while sending response to client");
+        } catch (RuntimeException rex) {
+            errorLogger.log(Level.SEVERE, "Error writing response" + rex.getLocalizedMessage(), rex);
         }
     }
 
     private void closeConnection() {
         try {
             this.in.close();
-            this.out.write("Closing connection");
-            this.out.flush();
             this.out.close();
             this.connection.close();
         } catch (IOException ex) {
-            System.err.println("IOException closing resources");
+        } catch (RuntimeException rex) {
+            errorLogger.log(Level.SEVERE, "Error reading message" + rex.getLocalizedMessage(), rex);
         }
+        this.connected = false;
+        requestLogger.info("Connection closed with " + connection.getInetAddress().getHostAddress());
     }
 }

@@ -81,11 +81,11 @@ public class CommandExecutor {
     }
 
     private static SMTPResponse executeNoop(SMTPNoopCommand noopCommand) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new SMTPResponse(250, "NOOP is OK");
     }
 
     private static SMTPResponse executeQuit(SMTPQuitCommand quitCommand) {
-        return new SMTPResponse(221, "Bye!");
+        return new SMTPResponse(221, "Bye");
     }
 
     private static SMTPResponse executeInvalid(SMTPInvalidCommand invalidCommand) {

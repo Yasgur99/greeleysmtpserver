@@ -32,7 +32,7 @@ public class SMTPParser {
         String verb = "";
 
         for (int i = 0; i < commands.length; i++) {
-            if (commands[i].length() <= line.length() && line.startsWith(commands[i])) {
+            if (commands[i].length() <= line.length() && line.toUpperCase().startsWith(commands[i])) {
                 verb = commands[i];
             }
         }

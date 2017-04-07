@@ -3,9 +3,12 @@ package greeleysmtpserver.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author yasgur99
@@ -13,6 +16,8 @@ import java.util.concurrent.Executors;
 public class MultiThreadedServer {
 
     private final static int POOL_SIZE = 50;
+    private final static Logger errorLogger = Logger.getLogger("server errors");
+    private final static Logger requestLogger = Logger.getLogger("requests");
 
     private ServerSocket serverSocket;
     private int port;
@@ -34,7 +39,9 @@ public class MultiThreadedServer {
             this.serverSocket = new ServerSocket(port);
             makeConnection();
         } catch (IOException ex) {
-            System.out.println("Could not create serverSocket on port " + port);
+            errorLogger.log(Level.SEVERE, "Error opening server socket" + ex.getLocalizedMessage(), ex);
+        } catch (RuntimeException rex) {
+            errorLogger.log(Level.SEVERE, "Runtime exception opening socket" + rex.getLocalizedMessage(), rex);
         }
     }
 
@@ -43,10 +50,16 @@ public class MultiThreadedServer {
         while (running) {
             try {
                 Socket newClient = this.serverSocket.accept();
-                Callable<Void> task = new ClientHandler(newClient, running);
+                try {
+                    newClient.setSoTimeout(5000);
+                } catch (SocketException ex) {
+                }
+                Callable<Void> task = new ClientHandler(newClient);
                 pool.submit(task);
             } catch (IOException ex) {
-                System.out.println("Issue with connection with client...");
+                errorLogger.log(Level.SEVERE, "Accept error" + ex.getLocalizedMessage(), ex);
+            } catch (RuntimeException rex) {
+                errorLogger.log(Level.SEVERE, "Unexpected error" + rex.getLocalizedMessage(), rex);
             }
         }
     }
@@ -56,13 +69,13 @@ public class MultiThreadedServer {
             this.serverSocket.close();
             System.out.println("Server shutdown");
         } catch (IOException ex) {
-            System.out.println("IOException closing serverSocket");
+            errorLogger.log(Level.SEVERE, "Error closing server socket" + ex.getLocalizedMessage(), ex);
+        } catch (RuntimeException rex) {
+            errorLogger.log(Level.SEVERE, "Unexpected error opening server socket" + rex.getLocalizedMessage(), rex);
         }
-
     }
 
     public void shutdown() {
         this.running = false;
     }
-
 }
