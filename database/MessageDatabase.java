@@ -10,9 +10,9 @@ import java.sql.Statement;
 /**
  * @author michaelmaitland
  */
-public class ConversationDatabase extends AbstractDatabase {
+public class MessageDatabase extends AbstractDatabase {
 
-    public ConversationDatabase(String filename) {
+    public MessageDatabase(String filename) {
         super(filename);
     }
 
@@ -23,7 +23,8 @@ public class ConversationDatabase extends AbstractDatabase {
                 + "	id integer PRIMARY KEY,\n"
                 + "	mailFrom text NOT NULL,\n"
                 + "	rcptTo text NOT NULL,\n"
-                + "      subject text,\n"
+                + "     subject text,\n"
+                + "     inResponseTo integer"
                 + "     data text NOT NULL\n"
                 + ");";
 
@@ -38,7 +39,7 @@ public class ConversationDatabase extends AbstractDatabase {
 
     @Override
     public void selectAll() {
-        String query = "SELECT id, mailFrom, rcptTo, subject,data FROM conversations";
+        String query = "SELECT id, mailFrom, rcptTo, subject, inResponseTo, data FROM conversations";
 
         try (Connection conn = connect();
                 Statement stmt = conn.createStatement();
@@ -50,6 +51,7 @@ public class ConversationDatabase extends AbstractDatabase {
                         + rs.getString("mailFrom") + "\t"
                         + rs.getString("rcptTo")
                         + rs.getString("subject")
+                        + rs.getString("inResponseTo")
                         + rs.getString("data"));
             }
         } catch (SQLException e) {
@@ -57,8 +59,8 @@ public class ConversationDatabase extends AbstractDatabase {
         }
     }
 
-    public void add(String mailFrom, String rcptTo, String subject, String data) {
-        String query = "INSERT INTO users(mailFrom, rcptTo, subject, data) VALUES(?,?,?,?)";
+    public void add(String mailFrom, String rcptTo, String subject, int inResponseTo, String data) {
+        String query = "INSERT INTO users(mailFrom, rcptTo, subject, inResponseTo, data) VALUES(?,?,?,?,?)";
 
         try (Connection conn = connect();
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -66,9 +68,9 @@ public class ConversationDatabase extends AbstractDatabase {
             pstmt.setString(1, mailFrom);
             pstmt.setString(2, rcptTo);
             pstmt.setString(3, subject);
-            pstmt.setString(4, data);
+            pstmt.setInt(4, inResponseTo);
+            pstmt.setString(5, data);
             pstmt.executeUpdate();
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
