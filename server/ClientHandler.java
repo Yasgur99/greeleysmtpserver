@@ -20,9 +20,15 @@ public class ClientHandler implements Callable<Void> {
     private Socket connection;
     private BufferedReader in;
     private PrintWriter out;
+    private Session session;
     private boolean connected;
+    private SMTPParser parser;
+    private CommandExecutor commandExecutor;
 
     public ClientHandler(Socket connection) {
+        this.session = new Session();
+        this.parser = new SMTPParser();
+        this.commandExecutor = new CommandExecutor(this.session);
         this.connection = connection;
         this.connected = true;
         requestLogger.info("Connection opened with " + connection.getInetAddress().getHostAddress());
@@ -37,6 +43,7 @@ public class ClientHandler implements Callable<Void> {
         while (connected) {
             SMTPResponse response = readClientMessage(); //get input and parse it
             if (response == null) break; //returns null if bad input (such as client disconnected)
+            updateSession(response);
             writeResponse(response);//send our resposne to client
             if (response.getCode() == 221) { //check to see if client asked to quit
                 this.connected = false;
@@ -72,7 +79,11 @@ public class ClientHandler implements Callable<Void> {
             line = in.readLine(); //try and read line from server
             if (line != null) {
                 line = line.trim();
-                return CommandExecutor.execute(new SMTPParser().parse(line));
+                SMTPCommand command = parser.parse(line);
+                session.updateSession(command);
+                SMTPResponse response =  commandExecutor.execute(command);
+                session.updateSession(response);
+                return response;
             }
         } catch (IOException ex) { //error reading
             this.connected = false;
@@ -85,6 +96,7 @@ public class ClientHandler implements Callable<Void> {
     }
 
     private void writeResponse(SMTPResponse response) {
+        if(this.session.isWritingData()) return; //dont respond if we are geting data from client still
         try {
             this.out.write(response.toString() + "\n");
             this.out.flush();

@@ -9,9 +9,10 @@ public class SMTPHeloCommand extends SMTPCommand {
     }
 
     // HELO <hostname>
+    @Override
     public void parse(String line) {
         if (line.indexOf(" ") > -1) {
-            hostname = line.substring(line.indexOf(" ") + 1, line.length());
+            hostname = line.substring(line.indexOf(" ") + 1, line.length()).trim();
         }
     }
 

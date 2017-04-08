@@ -9,6 +9,7 @@ public class SMTPMailFromCommand extends SMTPCommand {
     }
 
     // MAIL FROM:<yyyy@example.com>
+    @Override
     public void parse(String line) {
         if (line.indexOf(":") > -1) {
             from = line.substring(line.indexOf(":"), line.length()).trim();
@@ -16,6 +17,7 @@ public class SMTPMailFromCommand extends SMTPCommand {
         }
     }
 
+    @Override
     public String getCommandName() {
         return "MAIL FROM";
     }

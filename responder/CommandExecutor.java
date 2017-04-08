@@ -4,12 +4,19 @@ package greeleysmtpserver.responder;
  * @author michaelmaitland
  */
 import greeleysmtpserver.parser.*;
+import greeleysmtpserver.server.Session;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class CommandExecutor {
 
-    public static SMTPResponse execute(SMTPCommand command) {
+    private Session session;
+
+    public CommandExecutor(Session session) {
+        this.session = session;
+    }
+
+    public SMTPResponse execute(SMTPCommand command) {
         if (command.getCommandName().equals("HELO")) {
             SMTPHeloCommand heloCommand = (SMTPHeloCommand) command;
             return executeHelo(heloCommand);
@@ -43,7 +50,8 @@ public class CommandExecutor {
     private static SMTPResponse executeHelo(SMTPHeloCommand heloCommand) {
         SMTPResponse response = new SMTPResponse();
         /*Handle someone not specifying who they are saying helo to*/
-        if (heloCommand.getHostName() == null || heloCommand.getHostName().equals("")) {
+        if (heloCommand.getHostName() == null || heloCommand.getHostName().equals("")
+                || heloCommand.getHostName().contains(" ")) {
             response.setCode(Codes.SYNTAX_ERROR_PARAMETERS);
             response.setMessage("Syntax error in command parameters");
         } else {
@@ -54,15 +62,14 @@ public class CommandExecutor {
             } catch (UnknownHostException ex) {
                 response.setMessage("I'm not sure of my IP address but");
             }
-            response.setMessage(response.getMessage() + " hello there");
+            response.setMessage(response.getMessage() + " hello there.");
         }
-        //TODO: verify hostname is us
         return response;
     }
 
     private static SMTPResponse executeMailFrom(SMTPMailFromCommand mailFromCommand) {
         SMTPResponse response = new SMTPResponse();
-        //TODO: implement MAIL FROM response
+        //if(mailFromCommand.getFrom()))
         return response;
     }
 
@@ -74,8 +81,12 @@ public class CommandExecutor {
 
     private static SMTPResponse executeData(SMTPDataCommand dataCommand) {
         SMTPResponse response = new SMTPResponse();
-        //TODO: implement DATA response
-        return response;
+        if (dataCommand.isDone()) {
+            //TODO: send the email
+        }
+            response.setCode(250);
+            response.setMessage("Ok.");
+            return response;
     }
 
     private static SMTPResponse executeRset(SMTPRsetCommand rsetCommand) {
@@ -91,14 +102,14 @@ public class CommandExecutor {
     }
 
     private static SMTPResponse executeNoop(SMTPNoopCommand noopCommand) {
-        return new SMTPResponse(250, "NOOP is OK");
+        return new SMTPResponse(250, "Ok.");
     }
 
     private static SMTPResponse executeQuit(SMTPQuitCommand quitCommand) {
-        return new SMTPResponse(221, "Bye");
+        return new SMTPResponse(221, "Bye.");
     }
 
     private static SMTPResponse executeInvalid(SMTPInvalidCommand invalidCommand) {
-        return new SMTPResponse(500, "Invalid Command");
+        return new SMTPResponse(500, "Invalid Command.");
     }
 }
