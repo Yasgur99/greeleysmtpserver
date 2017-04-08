@@ -3,6 +3,7 @@ package greeleysmtpserver;
 /**
  * @author michaelmaitland
  */
+import greeleysmtpserver.database.UserDatabase;
 import greeleysmtpserver.server.MultiThreadedServer;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,9 +19,13 @@ public class CentralObject {
         /*Set config file for logs*/
         System.setProperty("java.util.logging.config.file",
                 "src/greeleysmtpserver/server/logger.properties");
+        
+        UserDatabase userDB = new UserDatabase("greeleysmtp.db");
+        userDB.add("joe", "dick");
+        userDB.selectAll();
+        
         /*Create and run server so it is listening for connections*/
         MultiThreadedServer server = new MultiThreadedServer(4444);
         server.start();
     }
-
 }
