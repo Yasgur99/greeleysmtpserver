@@ -122,16 +122,13 @@ public class SMTPCommandExecutor {
         return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
     }
 
-    private static SMTPResponse executeRset(SMTPRsetCommand rsetCommand) {
-        SMTPResponse response = new SMTPResponse();
-        //TODO: implement RSET response
-        return response;
+    private SMTPResponse executeRset(SMTPRsetCommand rsetCommand) {
+        session = new Session();
+        return new SMTPResponse(250, "Ok.");
     }
 
-    private static SMTPResponse executeVrfy(SMTPVrfyCommand vrfyCommand) {
-        SMTPResponse response = new SMTPResponse();
-        //TODO: implement VRFY response
-        return response;
+    private SMTPResponse executeVrfy(SMTPVrfyCommand vrfyCommand) {
+        return new SMTPResponse();
     }
 
     private static SMTPResponse executeNoop(SMTPNoopCommand noopCommand) {

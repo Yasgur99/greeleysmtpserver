@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 import java.util.logging.FileHandler;
 import java.util.logging.SimpleFormatter;
 
-public class CentralObject {
+public class Main {
 
     public static void main(String[] args) throws UnknownHostException, IOException {
         /*Output ip addresses as IPv4 if possible*/

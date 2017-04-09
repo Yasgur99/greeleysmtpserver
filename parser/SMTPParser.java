@@ -54,7 +54,7 @@ public class SMTPParser {
             this.parsingData.setDone(false);
             return this.parsingData;
         } else if (verb.equals("RSET")) {
-
+            return new SMTPRsetCommand();
         } else if (verb.equals("VRFY")) {
 
         } else if (verb.equals("NOOP")) {
