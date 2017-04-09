@@ -45,7 +45,7 @@ public class SMTPParser {
             SMTPCommand mailFromCommand = new SMTPMailFromCommand();
             mailFromCommand.parse(line);
             return mailFromCommand;
-        } else if (verb.equals("MAIL FROM")) {
+        } else if (verb.equals("RCPT TO")) {
             SMTPCommand rcptToCommand = new SMTPRcptCommand();
             rcptToCommand.parse(line);
             return (SMTPCommand) rcptToCommand;

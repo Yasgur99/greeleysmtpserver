@@ -5,7 +5,6 @@ public class SMTPHeloCommand extends SMTPCommand {
     private String hostname;
 
     SMTPHeloCommand() {
-        this.extended = false;
     }
 
     // HELO <hostname>

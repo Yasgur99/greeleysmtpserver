@@ -3,18 +3,27 @@ package greeleysmtpserver.parser;
 public class SMTPMailFromCommand extends SMTPCommand {
 
     private String from;
+    private boolean containsColon;
 
     SMTPMailFromCommand() {
-        this.extended = false;
+        this.containsColon = false;
     }
 
     // MAIL FROM:<yyyy@example.com>
     @Override
     public void parse(String line) {
-        if (line.indexOf(":") > -1) {
-            from = line.substring(line.indexOf(":"), line.length()).trim();
-            from = from.substring(1, from.length() - 1);
+        if (line.length() >= 10) { //mail from:
+            if (line.charAt(9) == ':') {
+                this.containsColon = true;
+                if (line.length() >= 11) {
+                    from = line.substring(10).trim();
+                }
+            }
         }
+    }
+
+    public boolean getContainsColon() {
+        return containsColon;
     }
 
     @Override

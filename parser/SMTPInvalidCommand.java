@@ -7,7 +7,6 @@ package greeleysmtpserver.parser;
 public class SMTPInvalidCommand extends SMTPCommand {
     
     public SMTPInvalidCommand(){
-        this.extended = false;
     }
 
     @Override

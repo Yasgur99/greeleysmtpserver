@@ -6,7 +6,6 @@ public class SMTPDataCommand extends SMTPCommand {
     private boolean done;
 
     SMTPDataCommand() {
-        this.extended = false;
     }
 
     // DATA ...

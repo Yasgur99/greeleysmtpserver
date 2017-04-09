@@ -1,25 +1,37 @@
 package greeleysmtpserver.parser;
 
 public class SMTPRcptCommand extends SMTPCommand {
-	private String from;
 
-	SMTPRcptCommand() {
-		extended = false;
-	}
+    private String recipient;
+    private boolean containsColon;
 
-	// RCPT TO:<yyyy@example.com>
-	public void parse(String line) {
-		if ( line.indexOf(":") > -1 ) {
-			from = line.substring(line.indexOf(":"), line.length()).trim();
-			from = from.substring(1, from.length() - 1);
-		}
-	}
+    SMTPRcptCommand() {
+        this.containsColon = false;
+    }
 
-	public String getCommandName() {
-		return "RCPT TO";
-	}
+    // RCPT TO:<yyyy@example.com>
+    @Override
+    public void parse(String line) {
+        if (line.length() >= 8) { //RCPT TO:
+            if (line.charAt(7) == ':') {
+                this.containsColon = true;
+                if (line.length() >= 9) {
+                    recipient = line.substring(8).trim();
+                }
+            }
+        }
+    }
+    
+    public boolean getContainsColon(){
+        return containsColon;
+    }
 
-	public String getFrom() {
-		return from;
-	}
+    @Override
+    public String getCommandName() {
+        return "RCPT TO";
+    }
+
+    public String getRecipient() {
+        return recipient;
+    }
 }

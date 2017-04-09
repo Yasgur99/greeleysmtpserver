@@ -8,11 +8,11 @@ import greeleysmtpserver.server.Session;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class CommandExecutor {
+public class SMTPCommandExecutor {
 
     private Session session;
 
-    public CommandExecutor(Session session) {
+    public SMTPCommandExecutor(Session session) {
         this.session = session;
     }
 
@@ -47,14 +47,13 @@ public class CommandExecutor {
         }
     }
 
-    private static SMTPResponse executeHelo(SMTPHeloCommand heloCommand) {
-        SMTPResponse response = new SMTPResponse();
+    private SMTPResponse executeHelo(SMTPHeloCommand heloCommand) {
         /*Handle someone not specifying who they are saying helo to*/
         if (heloCommand.getHostName() == null || heloCommand.getHostName().equals("")
                 || heloCommand.getHostName().contains(" ")) {
-            response.setCode(Codes.SYNTAX_ERROR_PARAMETERS);
-            response.setMessage("Syntax error in command parameters");
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "No HELO argument found.");
         } else {
+            SMTPResponse response = new SMTPResponse();
             response.setCode(Codes.REQUESTED_ACTION_OKAY);
             try {
                 String serverIP = InetAddress.getLocalHost().getHostAddress();
@@ -63,30 +62,64 @@ public class CommandExecutor {
                 response.setMessage("I'm not sure of my IP address but");
             }
             response.setMessage(response.getMessage() + " hello there.");
+            session.setDidSayHelo(true);
+            return response;
         }
-        return response;
     }
 
-    private static SMTPResponse executeMailFrom(SMTPMailFromCommand mailFromCommand) {
-        SMTPResponse response = new SMTPResponse();
-        //if(mailFromCommand.getFrom()))
-        return response;
+    private SMTPResponse executeMailFrom(SMTPMailFromCommand mailFromCommand) {
+        /*Check to make sure we issued necessary preceding commands*/
+        if (!session.didSayHelo())
+            return new SMTPResponse(Codes.BAD_SEQUENCE, "HELO was never issued.");
+        else if (session.didSpecifyMailFrom())
+            return new SMTPResponse(Codes.BAD_SEQUENCE, "MAIL already issued.");
+
+        /*Check validity of statement*/
+        if (!mailFromCommand.getContainsColon())
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "No FROM: in MAIL.");
+        else if (mailFromCommand.getFrom() == null)
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "No MAIL FROM argument found.");
+        else if (mailFromCommand.getFrom().contains(" ")) {
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "Unknown MAIL FROM paramater \""
+                    + mailFromCommand.getFrom().substring(mailFromCommand.getFrom()
+                            .indexOf(" ")) + "\".");
+        } //TODO: else if (isInDatabase(mailFromCommand.getFrom())) {
+        else if (true) {
+            session.setDidSpecifyMailFrom(true);
+            session.setFrom(mailFromCommand.getFrom());
+            return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Address Ok.");
+        } else
+            return new SMTPResponse(Codes.REQUESTED_ACTION_NOT_TAKEN_MAILBOX_UNAVALIABLE, "Mailbox not found in our database.");//TODO: make sure this is the correct code
     }
 
-    private static SMTPResponse executeRcptTo(SMTPRcptCommand rcptToCommand) {
-        SMTPResponse response = new SMTPResponse();
-        //TODO: implement RCPT TO Response
-        return response;
+    private SMTPResponse executeRcptTo(SMTPRcptCommand rcptToCommand) {
+        /*Check to make sure we issued necesarry preceding commands*/
+        if (!session.didSayHelo())
+            return new SMTPResponse(Codes.BAD_SEQUENCE, "HELO was never issued.");
+        else if (!session.didSpecifyMailFrom())
+            return new SMTPResponse(Codes.BAD_SEQUENCE, "No MAIL FROM command has been issued.");
+
+        /*Check validity of command*/
+        if (!rcptToCommand.getContainsColon())
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "No TO: in RCPT.");
+        else if (rcptToCommand.getRecipient() == null)
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "No RCPT TO argument found.");
+        else if (rcptToCommand.getRecipient().contains(" ")) {
+            return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "Unknown RCPT TO paramater \""
+                    + rcptToCommand.getRecipient().substring(rcptToCommand.getRecipient()
+                            .indexOf(" ")) + "\".");
+        } else { //else we are good 
+            if (!session.didSpecifyRcptTo()) session.setdidSpecifyRcptTo(true);
+            session.addRecipient(rcptToCommand.getRecipient());
+            return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, rcptToCommand.getRecipient() + " Ok.");
+        }
     }
 
-    private static SMTPResponse executeData(SMTPDataCommand dataCommand) {
-        SMTPResponse response = new SMTPResponse();
+    private SMTPResponse executeData(SMTPDataCommand dataCommand) {
         if (dataCommand.isDone()) {
             //TODO: send the email
         }
-            response.setCode(250);
-            response.setMessage("Ok.");
-            return response;
+        return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
     }
 
     private static SMTPResponse executeRset(SMTPRsetCommand rsetCommand) {
