@@ -1,4 +1,3 @@
-
 package greeleysmtpserver.server;
 
 import greeleysmtpserver.parser.SMTPCommand;
@@ -9,7 +8,6 @@ import java.util.List;
 /**
  * @author michaelmaitland
  */
-
 public class Session {
 
     private boolean didSayHelo;
@@ -17,16 +15,16 @@ public class Session {
     private boolean didSpecifyRcptTo;
     private boolean isWritingData;
     private boolean doneWritingData;
-    
+
     private String from;
     private List<String> recipients;
-    
-    public void setFrom(String from){
+
+    public void setFrom(String from) {
         this.recipients = new ArrayList<>();
         this.from = from;
     }
-    
-    public void addRecipient(String recipient){
+
+    public void addRecipient(String recipient) {
         this.recipients.add(recipient);
     }
 
@@ -68,5 +66,15 @@ public class Session {
 
     public void setDoneWritingData(boolean doneWritingData) {
         this.doneWritingData = doneWritingData;
+    }
+
+    public void reset() {
+        didSayHelo = false;
+        didSpecifyMailFrom = false;
+        didSpecifyRcptTo = false;
+        isWritingData = false;
+        doneWritingData = false;
+        from = null;
+        recipients = new ArrayList<>();
     }
 }

@@ -3,6 +3,7 @@ package greeleysmtpserver.responder;
 /**
  * @author michaelmaitland
  */
+import greeleysmtpserver.database.UserDatabase;
 import greeleysmtpserver.parser.*;
 import greeleysmtpserver.server.Session;
 import java.net.InetAddress;
@@ -83,8 +84,7 @@ public class SMTPCommandExecutor {
             return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "Unknown MAIL FROM paramater \""
                     + mailFromCommand.getFrom().substring(mailFromCommand.getFrom()
                             .indexOf(" ")) + "\".");
-        } //TODO: else if (isInDatabase(mailFromCommand.getFrom())) {
-        else if (true) {
+        }  else if (UserDatabase.getInstance("greelysmtp.db").containsUser(mailFromCommand.getFrom())) {
             session.setDidSpecifyMailFrom(true);
             session.setFrom(mailFromCommand.getFrom());
             return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Address Ok.");
@@ -123,23 +123,28 @@ public class SMTPCommandExecutor {
     }
 
     private SMTPResponse executeRset(SMTPRsetCommand rsetCommand) {
-        session = new Session();
-        return new SMTPResponse(250, "Ok.");
+        synchronized(session){
+            session.reset();
+        }
+        return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
     }
 
     private SMTPResponse executeVrfy(SMTPVrfyCommand vrfyCommand) {
-        return new SMTPResponse();
+        if(UserDatabase.getInstance("greeley.db").containsUser(vrfyCommand.gethostname()))
+            return new SMTPResponse(0,null);//need to figure out correct code if in database
+        else 
+            return new SMTPResponse(0,null);//need to figure out correct code if misisng
     }
 
     private static SMTPResponse executeNoop(SMTPNoopCommand noopCommand) {
-        return new SMTPResponse(250, "Ok.");
+        return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
     }
 
     private static SMTPResponse executeQuit(SMTPQuitCommand quitCommand) {
-        return new SMTPResponse(221, "Bye.");
+        return new SMTPResponse(Codes.SERVICE_CLOSING_TRANSMISSION, "Bye.");
     }
 
     private static SMTPResponse executeInvalid(SMTPInvalidCommand invalidCommand) {
-        return new SMTPResponse(500, "Invalid Command.");
+        return new SMTPResponse(Codes.SYNTAX_ERROR_COMMAND_UNRECOGNIZED, "Invalid Command.");
     }
 }

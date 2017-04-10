@@ -28,7 +28,7 @@ public class ClientHandler implements Callable<Void> {
     public ClientHandler(Socket connection) {
         this.session = new Session();
         this.parser = new SMTPParser();
-        this.commandExecutor = new SMTPCommandExecutor(this.session);
+        this.commandExecutor = new SMTPCommandExecutor(session);
         this.connection = connection;
         this.connected = true;
         requestLogger.info("Connection opened with " + connection.getInetAddress().getHostAddress());
@@ -87,11 +87,12 @@ public class ClientHandler implements Callable<Void> {
             this.connected = false;
         }
         return null;
-
     }
 
     private void writeResponse(SMTPResponse response) {
-        if(session.isWritingData()) return; //dont respond if we are geting data from client still
+        synchronized (session) {
+            if (session.isWritingData()) return; //dont respond if we are geting data from client still
+        }
         try {
             this.out.write(response.toString() + "\n");
             this.out.flush();
