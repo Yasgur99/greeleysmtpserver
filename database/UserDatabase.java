@@ -20,18 +20,20 @@ import javax.xml.bind.DatatypeConverter;
 public class UserDatabase extends AbstractDatabase {
 
     private static UserDatabase userDatabase = null;
+    private static String FILENAME = "greeleysmtp.db";
+    private static String DOMAIN = "ccsd.ws";
     
-    private UserDatabase(String filename) {
-        super(filename);
+    private UserDatabase() {
+        super(FILENAME);
         createTable();
     }
     
-    public static UserDatabase getInstance(String filename){
+    public static UserDatabase getInstance(){
         if(userDatabase == null)
-            userDatabase = new UserDatabase(filename);
+            userDatabase = new UserDatabase();
         return userDatabase;
     }
-
+    
     private final static Logger errorLogger = Logger.getLogger("server errors");
 
     @Override
@@ -107,5 +109,9 @@ public class UserDatabase extends AbstractDatabase {
         byte[] digest = md.digest();
         return DatatypeConverter
                 .printHexBinary(digest).toLowerCase();
+    }
+    
+    public static String getDomain(){
+        return DOMAIN;
     }
 }

@@ -16,7 +16,7 @@ public class Main {
         System.setProperty("java.util.logging.config.file",
                 "src/greeleysmtpserver/server/logger.properties");
         
-        UserDatabase userDB = UserDatabase.getInstance("greeleysmtp.db");
+        UserDatabase userDB = UserDatabase.getInstance();
         addDummyUsers(userDB);
         
         /*Create and run server so it is listening for connections*/

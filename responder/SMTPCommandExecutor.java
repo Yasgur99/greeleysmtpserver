@@ -84,7 +84,7 @@ public class SMTPCommandExecutor {
             return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "Unknown MAIL FROM paramater \""
                     + mailFromCommand.getFrom().substring(mailFromCommand.getFrom()
                             .indexOf(" ")) + "\".");
-        }  else if (UserDatabase.getInstance("greelysmtp.db").containsUser(mailFromCommand.getFrom())) {
+        }  else if (UserDatabase.getInstance().containsUser(mailFromCommand.getFrom())) {
             session.setDidSpecifyMailFrom(true);
             session.setFrom(mailFromCommand.getFrom());
             return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Address Ok.");
@@ -130,10 +130,11 @@ public class SMTPCommandExecutor {
     }
 
     private SMTPResponse executeVrfy(SMTPVrfyCommand vrfyCommand) {
-        if(UserDatabase.getInstance("greeley.db").containsUser(vrfyCommand.gethostname()))
-            return new SMTPResponse(0,null);//need to figure out correct code if in database
+        if(UserDatabase.getInstance().containsUser(vrfyCommand.gethostname()))
+            return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY,vrfyCommand.getCommandName() 
+                    + "@" + UserDatabase.getDomain());
         else 
-            return new SMTPResponse(0,null);//need to figure out correct code if misisng
+            return new SMTPResponse(Codes.USER_NOT_LOCAL,"User not in our database.");//need to figure out correct code if misisng
     }
 
     private static SMTPResponse executeNoop(SMTPNoopCommand noopCommand) {
