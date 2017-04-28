@@ -32,5 +32,7 @@ public class Main {
         userDB.add("avisaven", "password1");
         userDB.add("jamiescharf", "lolUWillNeverGuess");
         userDB.add("bjornchen", "madHax3r");
+        userDB.add("aditi", "lmao123");
+        userDB.add("maxauerbaccher", "laugh");
     }
 }
