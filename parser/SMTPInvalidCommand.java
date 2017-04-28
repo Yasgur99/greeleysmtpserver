@@ -1,20 +1,22 @@
-
 package greeleysmtpserver.parser;
+
+import greeleysmtpserver.responder.Codes;
+import greeleysmtpserver.responder.SMTPResponse;
+import greeleysmtpserver.server.Session;
+
 /**
  * @author michaelmaitland
  */
 
-public class SMTPInvalidCommand extends SMTPCommand {
-    
-    public SMTPInvalidCommand(){
+public class SMTPInvalidCommand implements SMTPCommand {
+
+    @Override
+    public SMTPResponse execute(Session session) {
+        return new SMTPResponse(Codes.SYNTAX_ERROR_COMMAND_UNRECOGNIZED, "Invalid Command.");
     }
 
     @Override
-    public String getCommandName() {
-        return "Invalid Command";
-    }
-
-    @Override
-    public void parse(String line) {
+    public SMTPParser getCommand() {
+        return SMTPParser.INVALID;
     }
 }

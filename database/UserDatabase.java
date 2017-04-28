@@ -28,6 +28,10 @@ public class UserDatabase extends AbstractDatabase {
         createTable();
     }
     
+    public static void setFilename(String filename){
+        FILENAME = filename;
+    }
+    
     public static UserDatabase getInstance(){
         if(userDatabase == null)
             userDatabase = new UserDatabase();

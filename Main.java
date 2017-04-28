@@ -4,6 +4,7 @@ package greeleysmtpserver;
  * @author michaelmaitland
  */
 
+import greeleysmtpserver.database.MessageDatabase;
 import greeleysmtpserver.database.UserDatabase;
 import greeleysmtpserver.server.MultiThreadedServer;
 
@@ -19,6 +20,8 @@ public class Main {
         UserDatabase userDB = UserDatabase.getInstance();
         addDummyUsers(userDB);
         
+        MessageDatabase messageDB = MessageDatabase.getInstance();
+                
         /*Create and run server so it is listening for connections*/
         MultiThreadedServer server = new MultiThreadedServer(4444);
         server.start();

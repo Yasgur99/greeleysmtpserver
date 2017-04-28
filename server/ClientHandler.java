@@ -22,13 +22,9 @@ public class ClientHandler implements Callable<Void> {
     private PrintWriter out;
     private Session session;
     private boolean connected;
-    private SMTPParser parser;
-    private SMTPCommandExecutor commandExecutor;
 
     public ClientHandler(Socket connection) {
         this.session = new Session();
-        this.parser = new SMTPParser();
-        this.commandExecutor = new SMTPCommandExecutor(session);
         this.connection = connection;
         this.connected = true;
         requestLogger.info("Connection opened with " + connection.getInetAddress().getHostAddress());
@@ -78,7 +74,11 @@ public class ClientHandler implements Callable<Void> {
             line = in.readLine(); //try and read line from server
             if (line != null) {
                 line = line.trim();
-                return commandExecutor.execute(parser.parse(line));
+                SMTPCommand command = SMTPParser.parse(line);
+                if (command.getCommand() == SMTPParser.DATA)
+                    return readDataFromClient((SMTPDataCommand) command);
+                else
+                    return command.execute(session);
             }
         } catch (IOException ex) { //error reading
             this.connected = false;
@@ -89,10 +89,27 @@ public class ClientHandler implements Callable<Void> {
         return null;
     }
 
-    private void writeResponse(SMTPResponse response) {
-        synchronized (session) {
-            if (session.isWritingData()) return; //dont respond if we are geting data from client still
+    private SMTPResponse readDataFromClient(SMTPDataCommand command) {
+        writeResponse(command.execute(session));
+        while (!command.isDone()) {
+            String line;
+            try {
+                line = in.readLine(); //try and read line from server
+                if (line != null)
+                    command.addData(line, session);
+            } catch (IOException ex) { //error reading
+                this.connected = false;
+                return null;
+            } catch (RuntimeException rex) { //we read in nothing
+                errorLogger.log(Level.SEVERE, "Unexpected error reading client message" + rex.getLocalizedMessage(), rex);
+                this.connected = false;
+                return null;
+            }
         }
+        return command.execute(session);
+    }
+
+    private void writeResponse(SMTPResponse response) {
         try {
             this.out.write(response.toString() + "\n");
             this.out.flush();

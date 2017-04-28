@@ -1,67 +1,86 @@
 package greeleysmtpserver.parser;
 
-public class SMTPParser {
+import greeleysmtpserver.responder.Codes;
+import greeleysmtpserver.responder.SMTPResponse;
+import greeleysmtpserver.server.Session;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
-    private String[] commands = {
-        "HELO",
-        "MAIL FROM",
-        "RCPT TO",
-        "DATA",
-        "RSET",
-        "VRFY",
-        "NOOP",
-        "QUIT"
+/**
+ * @author michaelmaitland
+ */
+public enum SMTPParser {
+
+    HELO("HELO") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPHeloCommand(line);
+        }
+        
+    },
+    MAIL_FROM("MAIL FROM") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPMailCommand(line);
+        }
+    },
+    RCPT_TO("RCPT TO") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPRcptCommand(line);
+        }
+    },
+    DATA("DATA") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPDataCommand();
+        }
+    },
+    RSET("RSET") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPRsetCommand();
+        }
+    },
+    VRFY("VRFY") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPVrfyCommand(line);
+        }
+    },
+    NOOP("NOOP") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPNoopCommand();
+        }
+    },
+    QUIT("QUIT") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPQuitCommand();
+        }
+    },
+    INVALID("") {
+        @Override
+        public SMTPCommand getCommand(String line) {
+            return new SMTPInvalidCommand();
+        }
     };
 
-    private SMTPDataCommand parsingData = null;
+    private String commandName;
 
-    // Parses the SMTP lines into a command
-    public SMTPCommand parse(String line) {
-        if (parsingData != null) {
-            if (line.equals(".")) {
-                SMTPDataCommand tmp = this.parsingData;
-                tmp.setDone(true);
-                this.parsingData = null;
-                return (SMTPCommand) tmp;
-            } else {
-                this.parsingData.addData(line);
-                return this.parsingData;
-            }
+    public abstract SMTPCommand getCommand(String line);
+
+    private SMTPParser(String commandName) {
+        this.commandName = commandName;
+    }
+
+    public static SMTPCommand parse(String line) {
+        for (SMTPParser c : values()) {
+            if (c.equals(INVALID)) continue;
+            if (line.toUpperCase().startsWith(c.commandName))
+                return c.getCommand(line);
         }
-
-        String verb = "";
-
-        for (int i = 0; i < commands.length; i++) {
-            if (commands[i].length() <= line.length() && line.toUpperCase().startsWith(commands[i])) {
-                verb = commands[i];
-            }
-        }
-
-        if (verb.equals("HELO")) {
-            SMTPCommand heloCommand = new SMTPHeloCommand();
-            heloCommand.parse(line);
-            return heloCommand;
-        } else if (verb.equals("MAIL FROM")) {
-            SMTPCommand mailFromCommand = new SMTPMailFromCommand();
-            mailFromCommand.parse(line);
-            return mailFromCommand;
-        } else if (verb.equals("RCPT TO")) {
-            SMTPCommand rcptToCommand = new SMTPRcptCommand();
-            rcptToCommand.parse(line);
-            return (SMTPCommand) rcptToCommand;
-        } else if (verb.equals("DATA")) {
-            this.parsingData = new SMTPDataCommand();
-            this.parsingData.setDone(false);
-            return this.parsingData;
-        } else if (verb.equals("RSET")) {
-            return new SMTPRsetCommand();
-        } else if (verb.equals("VRFY")) {
-
-        } else if (verb.equals("NOOP")) {
-
-        } else if (verb.equals("QUIT")) {
-            return new SMTPQuitCommand();
-        } 
-            return new SMTPInvalidCommand();
+        return new SMTPInvalidCommand();
     }
 }

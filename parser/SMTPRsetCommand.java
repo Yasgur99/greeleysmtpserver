@@ -1,16 +1,24 @@
 package greeleysmtpserver.parser;
 
-public class SMTPRsetCommand extends SMTPCommand {
+import greeleysmtpserver.responder.Codes;
+import greeleysmtpserver.responder.SMTPResponse;
+import greeleysmtpserver.server.Session;
+
+public class SMTPRsetCommand implements SMTPCommand {
 
     private String hostname;
 
-    SMTPRsetCommand() {
+    //TODO: check to see if we should return 250 if contains params
+    @Override
+    public SMTPResponse execute(Session session) {
+        synchronized (session) {
+            session.reset();
+        }
+        return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
     }
 
-    public void parse(String line) {
-    }
-
-    public String getCommandName() {
-        return "RSET";
+    @Override
+    public SMTPParser getCommand() {
+        return SMTPParser.RSET;
     }
 }

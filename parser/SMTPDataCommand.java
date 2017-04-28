@@ -1,24 +1,45 @@
 package greeleysmtpserver.parser;
 
-public class SMTPDataCommand extends SMTPCommand {
+import greeleysmtpserver.database.MessageDatabase;
+import greeleysmtpserver.responder.Codes;
+import greeleysmtpserver.responder.SMTPResponse;
+import greeleysmtpserver.server.Session;
 
-    private String data;
+public class SMTPDataCommand implements SMTPCommand {
+
+    private StringBuilder data;
     private boolean done;
 
-    SMTPDataCommand() {
+    public SMTPDataCommand() {
+        this.data = new StringBuilder();
     }
 
-    // DATA ...
-    public void parse(String line) {
-        // nothing to parse
+    @Override
+    public SMTPResponse execute(Session session) {
+        if (!done)
+            return new SMTPResponse(Codes.START_MAIL_INPUT, "354 Enter mail, end with a single \".\".");
+        else{
+            //session.writeToDatabse();
+            return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
+        }
     }
 
-    public void addData(String data) {
-        this.data = this.data + data;
+    public void addData(String data, Session session) {
+        if (data.matches("\\.|\\.\\s*|\\s\\.|\\s*\\.\\s*")) {
+            done = true;
+            session.setDoneWritingData(true);
+            return;
+        }
+        if (data.matches("(S|s)ubject:.*")) {
+            session.setSubject(data.substring(8));
+            return;
+        }
+        this.data.append(data);
     }
 
-    public String getCommandName() {
-        return "DATA";
+    @Override
+    public SMTPParser getCommand() {
+        return SMTPParser.DATA;
     }
 
     public void setDone(boolean done) {
@@ -30,6 +51,6 @@ public class SMTPDataCommand extends SMTPCommand {
     }
 
     public String getData() {
-        return data;
+        return data.toString();
     }
 }

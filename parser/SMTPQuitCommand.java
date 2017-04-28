@@ -1,18 +1,23 @@
 
 package greeleysmtpserver.parser;
+
+import greeleysmtpserver.responder.Codes;
+import greeleysmtpserver.responder.SMTPResponse;
+import greeleysmtpserver.server.Session;
+
 /**
  * @author michaelmaitland
  */
 
-public class SMTPQuitCommand extends SMTPCommand {
+public class SMTPQuitCommand implements SMTPCommand {
 
     @Override
-    public String getCommandName() {
-        return "QUIT";
+    public SMTPResponse execute(Session session) {
+        return new SMTPResponse(Codes.SERVICE_CLOSING_TRANSMISSION, "Bye.");
     }
-
+    
     @Override
-    public void parse(String line) {
+    public SMTPParser getCommand() {
+        return SMTPParser.QUIT;
     }
-
 }

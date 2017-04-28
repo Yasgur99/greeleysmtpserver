@@ -1,18 +1,23 @@
 
 package greeleysmtpserver.parser;
+
+import greeleysmtpserver.responder.Codes;
+import greeleysmtpserver.responder.SMTPResponse;
+import greeleysmtpserver.server.Session;
+
 /**
  * @author michaelmaitland
  */
 
-public class SMTPNoopCommand extends SMTPCommand{
+public class SMTPNoopCommand implements SMTPCommand{
 
     @Override
-    public String getCommandName() {
-        return "NOOP";
+    public SMTPResponse execute(Session session) {
+        return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
     }
-
+    
     @Override
-    public void parse(String line) {
+    public SMTPParser getCommand() {
+        return SMTPParser.NOOP;
     }
-
 }
