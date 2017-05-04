@@ -13,7 +13,7 @@ public abstract class AbstractDatabase {
     protected String url;
 
     public AbstractDatabase(String filename) {
-        this.url = "jdbc:sqlite:/Users/michaelmaitland/Desktop/" + filename;
+        this.url = "jdbc:sqlite:" + System.getProperty("user.home") + "/Desktop/" + filename;
         createDatabase();
     }
 
