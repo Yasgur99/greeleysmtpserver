@@ -19,7 +19,9 @@ public class SMTPMailCommand implements SMTPCommand {
     private void parse(String line) {
         if (line.matches("(?i)MAIL FROM:.*"))
             this.containsColon = true;
-        if (line.matches("(?i)MAIL FROM:\\s?\\S.*")) 
+        if(line.matches("(?i)MAIL FROM:\\s?\\S[a-zA-Z0-9_\\.]*@"+UserDatabase.getDomain()))
+            from = line.substring(10,line.indexOf("@")).trim();
+        else if (line.matches("(?i)MAIL FROM:\\s?\\S[a-zA-Z0-9_\\.]*")) 
             from = line.substring(10).trim();
     }
 
