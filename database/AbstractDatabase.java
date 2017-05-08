@@ -24,7 +24,6 @@ public abstract class AbstractDatabase {
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("Driver Name: " + meta.getDriverName());
             }
         } catch (SQLException ex) {
         }
