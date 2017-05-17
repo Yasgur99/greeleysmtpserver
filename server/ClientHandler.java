@@ -46,6 +46,7 @@ public class ClientHandler implements Callable<Void> {
             }
         }
         closeConnection();
+        new Relay(session).relayMail();
         return null;
     }
 

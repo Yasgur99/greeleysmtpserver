@@ -17,7 +17,7 @@ public class SMTPDataCommand implements SMTPCommand {
     @Override
     public SMTPResponse execute(Session session) {
         if (!done)
-            return new SMTPResponse(Codes.START_MAIL_INPUT, "354 Enter mail, end with a single \".\".");
+            return new SMTPResponse(Codes.START_MAIL_INPUT, "Enter mail, end with a single \".\".");
         else{
             //session.writeToDatabse();
             return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Ok.");
