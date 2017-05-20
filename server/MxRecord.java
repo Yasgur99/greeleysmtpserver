@@ -1,9 +1,12 @@
 package greeleysmtpserver.server;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.InitialDirContext;
 
 public class MxRecord {
 
@@ -13,28 +16,38 @@ public class MxRecord {
         this.domain = domain;
     }
 
-    public List<String> executeLookup() {
+    public  List<String> lookupMailHosts() throws NamingException {
 
-        String command = "dig " + domain + "mx +short | sort -n";
-        List<String> mailServers = new ArrayList<>();
-        Process p;
-        try {
-            p = Runtime.getRuntime().exec(command);
-            p.waitFor();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        // get the default initial Directory Context
+        InitialDirContext iDirC = new InitialDirContext();
+        // get the MX records from the default DNS directory service provider
+        //    NamingException thrown if no DNS record found for domainName
+        Attributes attributes = iDirC.getAttributes("dns:/" + domain, new String[]{"MX"});
+        // attributeMX is an attribute ('list') of the Mail Exchange(MX) Resource Records(RR)
+        Attribute attributeMX = attributes.get("MX");
 
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                    mailServers.add(line);
-            }
-
-            if (mailServers.isEmpty()) return null;
-            else return mailServers;
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        // if there are no MX RRs then default to domainName (see: RFC 974)
+        if (attributeMX == null) {
+            return null;
         }
-        return null;
+
+        // split MX RRs into Preference Values(pvhn[0]) and Host Names(pvhn[1])
+        String[][] pvhn = new String[attributeMX.size()][2];
+        for (int i = 0; i < attributeMX.size(); i++) {
+            pvhn[i] = ("" + attributeMX.get(i)).split("\\s+");
+        }
+
+        // sort the MX RRs by RR value (lower is preferred)
+        Arrays.sort(pvhn, (String[] o1, String[] o2) -> (Integer.parseInt(o1[0]) - Integer.parseInt(o2[0])));
+
+        // put sorted host names in an array, get rid of any trailing '.' 
+        List<String> sortedHostNames = new ArrayList<String>();
+        for (int i = 0; i < pvhn.length; i++) {
+            if (pvhn[i][1].endsWith("."))
+                sortedHostNames.add(pvhn[i][1].substring(0, pvhn[i][1].length() - 1));
+            else
+                sortedHostNames.add(pvhn[i][1]);
+        }
+        return sortedHostNames;
     }
 }
-

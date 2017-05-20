@@ -46,7 +46,6 @@ public class ClientHandler implements Callable<Void> {
             }
         }
         closeConnection();
-        new Relay(session).relayMail();
         return null;
     }
 
@@ -107,7 +106,9 @@ public class ClientHandler implements Callable<Void> {
                 return null;
             }
         }
-        return command.execute(session);
+        SMTPResponse response = command.execute(session);
+        new Relay(session).relayMail();
+        return response;
     }
 
     private void writeResponse(SMTPResponse response) {

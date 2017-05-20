@@ -48,4 +48,9 @@ public class SMTPHeloCommand implements SMTPCommand {
     public String getHostName() {
         return hostname;
     }
+    
+    @Override
+    public String toString(){
+        return "HELO " + hostname;
+    }
 }

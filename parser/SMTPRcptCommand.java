@@ -9,7 +9,7 @@ public class SMTPRcptCommand implements SMTPCommand {
     private String recipient;
     private boolean containsColon;
 
-    SMTPRcptCommand(String line) {
+    public SMTPRcptCommand(String line) {
         this.containsColon = false;
         parse(line);
     }
@@ -51,5 +51,10 @@ public class SMTPRcptCommand implements SMTPCommand {
 
     public String getRecipient() {
         return recipient;
+    }
+    
+    @Override
+    public String toString(){
+        return "RCPT TO: " + recipient;
     }
 }

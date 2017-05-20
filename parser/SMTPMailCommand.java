@@ -10,7 +10,7 @@ public class SMTPMailCommand implements SMTPCommand {
     private String from;
     private boolean containsColon;
 
-    SMTPMailCommand(String line) {
+    public SMTPMailCommand(String line) {
         this.containsColon = false;
         parse(line);
     }
@@ -61,5 +61,10 @@ public class SMTPMailCommand implements SMTPCommand {
 
     public String getFrom() {
         return from;
+    }
+    
+    @Override
+    public String toString(){
+        return "MAIL FROM: " + from;
     }
 }

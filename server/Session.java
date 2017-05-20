@@ -20,6 +20,11 @@ public class Session {
 
     private String data;
     private String subject;
+    private String date;
+    private String to;
+    private String fromInData;
+    private String cc;
+    
     private boolean isWritingData;
     private boolean doneWritingData;
 
@@ -100,14 +105,51 @@ public class Session {
         return this.subject;
     }
 
+    public void setDate(String date){
+        this.date = date;
+    }
+    
+    public String getDate(){
+        return date;
+    }
+    
+    public void setTo(String to){
+        this.to = to;
+    }
+    
+    public String getTo(){
+        return to;
+    }
+    
+    public void setCc(String cc){
+        this.cc = cc;
+    }
+    
+    public String getCc(){
+        return cc;
+    }
+    
+    public void setFromInData(String fromInData){
+        this.fromInData = fromInData;
+    }
+    
+    public String getFromInData(){
+        return fromInData;
+    }
+    
     public void reset() {
         didSayHelo = false;
-        from = null;
-        didSpecifyMailFrom = false;
-        recipients = new ArrayList<>();
-        didSpecifyRcptTo = false;
-        isWritingData = false;
-        doneWritingData = false;
+        this.from = null;
+        this.didSpecifyMailFrom = false;
+        this.recipients = new ArrayList<>();
+        this.didSpecifyRcptTo = false;
+        this.isWritingData = false;
+        this.doneWritingData = false;
         this.data = null;
+        this.date = null;
+        this.subject = null;
+        this.cc = null;
+        this.fromInData = null;
+        this.to = null;
     }
 }

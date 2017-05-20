@@ -20,4 +20,9 @@ public class SMTPQuitCommand implements SMTPCommand {
     public SMTPParser getCommand() {
         return SMTPParser.QUIT;
     }
+    
+    @Override 
+    public String toString(){
+        return "QUIT";
+    }
 }

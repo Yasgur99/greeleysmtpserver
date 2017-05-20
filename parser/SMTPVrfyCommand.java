@@ -37,4 +37,9 @@ public class SMTPVrfyCommand implements SMTPCommand {
     public String gethostname() {
         return username;
     }
+    
+    @Override
+    public String toString(){
+        return "VRFY " + username;
+    }
 }

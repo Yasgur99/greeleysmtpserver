@@ -21,4 +21,9 @@ public class SMTPRsetCommand implements SMTPCommand {
     public SMTPParser getCommand() {
         return SMTPParser.RSET;
     }
+    
+    @Override
+    public String toString(){
+        return "RSET";
+    }
 }
