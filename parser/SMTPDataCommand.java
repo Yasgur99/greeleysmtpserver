@@ -40,7 +40,7 @@ public class SMTPDataCommand implements SMTPCommand {
             session.setSubject(data.substring(8).trim());
         if(data.matches("(T|t)o:.*"))
             session.setTo(data.substring(3).trim());
-        if(data.matches("(C|c)c:.*"))
+        if(data.matches("(C|c){2}:.*"))
             session.setCc(data.substring(3).trim());
         if(data.matches("(F|f)rom:.*"))
             session.setDate(data.substring(5).trim());

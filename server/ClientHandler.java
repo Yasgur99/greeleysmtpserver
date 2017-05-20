@@ -1,5 +1,7 @@
 package greeleysmtpserver.server;
 
+import greeleysmtpserver.database.MessageDatabase;
+import greeleysmtpserver.database.UserDatabase;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Callable;
@@ -57,8 +59,8 @@ public class ClientHandler implements Callable<Void> {
             this.out = new PrintWriter(
                     new OutputStreamWriter(
                             this.connection.getOutputStream()));
-            this.out.write("Connection with server has been made\n");
-            this.out.flush();
+            writeResponse(new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, 
+                                            UserDatabase.getDomain() + " Simple Mail Transfer Service Ready"));
             return true;
         } catch (IOException ex) {
             this.connected = false;
