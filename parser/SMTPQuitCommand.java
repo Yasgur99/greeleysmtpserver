@@ -23,6 +23,6 @@ public class SMTPQuitCommand implements SMTPCommand {
     
     @Override 
     public String toString(){
-        return "QUIT";
+        return "QUIT" + "\r\n";
     }
 }

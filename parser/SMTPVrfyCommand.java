@@ -40,6 +40,6 @@ public class SMTPVrfyCommand implements SMTPCommand {
     
     @Override
     public String toString(){
-        return "VRFY " + username;
+        return "VRFY " + username + "\r\n";
     }
 }

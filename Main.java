@@ -15,7 +15,7 @@ public class Main {
         System.setProperty("java.net.preferIPv4Stack", "true");
         /*Set config file for logs*/
         System.setProperty("java.util.logging.config.file",
-                "src/greeleysmtpserver/server/logger.properties");
+                "src/greeleysmtpserver/logger.properties");
         
         UserDatabase userDB = UserDatabase.getInstance();
         addDummyUsers(userDB);

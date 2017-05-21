@@ -72,6 +72,6 @@ public class SMTPDataCommand implements SMTPCommand {
     @Override 
     public String toString(){
         /*!!!!DO NOT USE THIS TO WRITE TO A SERVER - NEED TO WAIT FOR RESPONSE BEFORE WRITING DATA!!!!*/
-        return "DATA\r\n" + data.toString();
+        return "DATA\r\n" + data.toString() + "\r\n";
     }
 }

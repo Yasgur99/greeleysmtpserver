@@ -42,6 +42,8 @@ public class ClientHandler implements Callable<Void> {
             SMTPResponse response = readClientMessage(); //get input and parse it
             if (response == null) break; //returns null if bad input (such as client disconnected)
             writeResponse(response);//send our resposne to client
+            if (session.shouldSend()) //check if we are ready to send the mail
+                new Relay(session).relayMail();
             if (response.getCode() == 221) { //check to see if client asked to quit
                 this.connected = false;
                 break;
@@ -59,8 +61,8 @@ public class ClientHandler implements Callable<Void> {
             this.out = new PrintWriter(
                     new OutputStreamWriter(
                             this.connection.getOutputStream()));
-            writeResponse(new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, 
-                                            UserDatabase.getDomain() + " Simple Mail Transfer Service Ready"));
+            writeResponse(new SMTPResponse(Codes.REQUESTED_ACTION_OKAY,
+                    UserDatabase.getDomain() + " Simple Mail Transfer Service Ready"));
             return true;
         } catch (IOException ex) {
             this.connected = false;
@@ -109,13 +111,13 @@ public class ClientHandler implements Callable<Void> {
             }
         }
         SMTPResponse response = command.execute(session);
-        new Relay(session).relayMail();
+        session.setShouldSend(true);
         return response;
     }
 
     private void writeResponse(SMTPResponse response) {
         try {
-            this.out.write(response.toString() + "\n");
+            this.out.write(response.toString() + "\r\n");
             this.out.flush();
         } catch (RuntimeException rex) {
             errorLogger.log(Level.SEVERE, "Error writing response" + rex.getLocalizedMessage(), rex);
@@ -129,7 +131,7 @@ public class ClientHandler implements Callable<Void> {
             this.connection.close();
         } catch (IOException ex) {
         } catch (RuntimeException rex) {
-            errorLogger.log(Level.SEVERE, "Error reading message" + rex.getLocalizedMessage(), rex);
+            errorLogger.log(Level.SEVERE, "Error closing connection" + rex.getLocalizedMessage(), rex);
         }
         this.connected = false;
         requestLogger.info("Connection closed with " + connection.getInetAddress().getHostAddress());

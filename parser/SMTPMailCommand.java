@@ -63,8 +63,12 @@ public class SMTPMailCommand implements SMTPCommand {
         return from;
     }
     
+    public void setFrom(String from){
+        this.from = from;
+    }
+    
     @Override
     public String toString(){
-        return "MAIL FROM: " + from;
+        return "MAIL FROM: " + from + "@" + UserDatabase.getDomain() + "\r\n";
     }
 }

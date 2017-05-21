@@ -22,22 +22,22 @@ public class UserDatabase extends AbstractDatabase {
     private static UserDatabase userDatabase = null;
     private static String FILENAME = "greeleysmtp.db";
     private static String DOMAIN = "ccsd.ws";
-    
+
     private UserDatabase() {
         super(FILENAME);
         createTable();
     }
-    
-    public static void setFilename(String filename){
+
+    public static void setFilename(String filename) {
         FILENAME = filename;
     }
-    
-    public static UserDatabase getInstance(){
-        if(userDatabase == null)
+
+    public static UserDatabase getInstance() {
+        if (userDatabase == null)
             userDatabase = new UserDatabase();
         return userDatabase;
     }
-    
+
     private final static Logger errorLogger = Logger.getLogger("server errors");
 
     @Override
@@ -111,11 +111,10 @@ public class UserDatabase extends AbstractDatabase {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(input.getBytes());
         byte[] digest = md.digest();
-        return DatatypeConverter
-                .printHexBinary(digest).toLowerCase();
+        return DatatypeConverter.printHexBinary(digest).toLowerCase();
     }
-    
-    public static String getDomain(){
+
+    public static String getDomain() {
         return DOMAIN;
     }
 }

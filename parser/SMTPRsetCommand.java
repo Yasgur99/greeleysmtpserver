@@ -24,6 +24,6 @@ public class SMTPRsetCommand implements SMTPCommand {
     
     @Override
     public String toString(){
-        return "RSET";
+        return "RSET" + "\r\n";
     }
 }

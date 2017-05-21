@@ -27,6 +27,7 @@ public class Session {
     
     private boolean isWritingData;
     private boolean doneWritingData;
+    private boolean shouldSend;
 
     //HELO
     public void setDidSayHelo(boolean didSayHelo) {
@@ -137,6 +138,14 @@ public class Session {
         return fromInData;
     }
     
+    public boolean shouldSend(){
+        return shouldSend;
+    }
+    
+    public void setShouldSend(boolean shouldSend){
+        this.shouldSend = shouldSend;
+    }
+    
     public void reset() {
         didSayHelo = false;
         this.from = null;
@@ -151,5 +160,6 @@ public class Session {
         this.cc = null;
         this.fromInData = null;
         this.to = null;
+        this.shouldSend = false;
     }
 }

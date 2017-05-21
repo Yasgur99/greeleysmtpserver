@@ -53,8 +53,12 @@ public class SMTPRcptCommand implements SMTPCommand {
         return recipient;
     }
     
+    public void setTo(String recipient){
+        this.recipient = recipient;
+    }
+    
     @Override
     public String toString(){
-        return "RCPT TO: " + recipient;
+        return "RCPT TO: " + recipient + "\r\n";
     }
 }
