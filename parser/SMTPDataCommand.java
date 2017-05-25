@@ -45,7 +45,7 @@ public class SMTPDataCommand implements SMTPCommand {
         if(data.matches("(F|f)rom:.*"))
             session.setDate(data.substring(5).trim());
         
-        this.data.append(data); //add the line regardless of memo or message (data gets transported)
+        this.data.append(data + "\r\n"); //add the line regardless of memo or message (data gets transported)
     }
 
     @Override
