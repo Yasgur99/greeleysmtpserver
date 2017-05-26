@@ -23,10 +23,12 @@ public class ClientHandler implements Callable<Void> {
     private BufferedReader in;
     private PrintWriter out;
     private Session session;
+    private RelayQueue sendQueue;
     private boolean connected;
 
-    public ClientHandler(Socket connection) {
+    public ClientHandler(Socket connection, RelayQueue sendQueue) {
         this.session = new Session();
+        this.sendQueue = sendQueue;
         this.connection = connection;
         this.connected = true;
         requestLogger.info("Connection opened with " + connection.getInetAddress().getHostAddress());
@@ -43,7 +45,7 @@ public class ClientHandler implements Callable<Void> {
             if (response == null) break; //returns null if bad input (such as client disconnected)
             writeResponse(response);//send our resposne to client
             if (session.shouldSend()) //check if we are ready to send the mail
-                new Relay(session).relayMail();
+                sendQueue.add(session);
             if (response.getCode() == 221) { //check to see if client asked to quit
                 this.connected = false;
                 break;

@@ -51,10 +51,10 @@ public class MultiThreadedServer {
             try {
                 Socket newClient = this.serverSocket.accept();
                 try {
-                    newClient.setSoTimeout(30000);
+                    newClient.setSoTimeout(180000);
                 } catch (SocketException ex) {
                 }
-                Callable<Void> task = new ClientHandler(newClient);
+                Callable<Void> task = new ClientHandler(newClient, new RelayQueue());
                 pool.submit(task);
             } catch (IOException ex) {
                 errorLogger.log(Level.SEVERE, "Accept error" + ex.getLocalizedMessage(), ex);

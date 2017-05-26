@@ -18,7 +18,7 @@ import javax.naming.NamingException;
 /**
  * @author michaelmaitland
  */
-public class Relay {
+public class Relay implements Runnable {
 
     private final int[] PORTS = {25, 465, 587};
     private final static Logger requestLogger = Logger.getLogger("requests");
@@ -31,6 +31,26 @@ public class Relay {
 
     public Relay(Session session) {
         this.session = session;
+    }
+    
+    @Override
+    public void run() {
+
+        String data = session.getData();
+        String from = session.getFrom();
+        List<String> recipients = session.getRecipients();
+
+        for (String recipient : recipients) {
+            try {
+               // if(recipient.contains("@")) need to take care of local relay
+                List<String> mxRecords = new MxRecord(recipient.split("@")[1]).lookupMailHosts();
+                if (mxRecords == null) return;
+                for (String server : mxRecords) {
+                    if (tryConversation(server, recipient)) break;
+                }
+            } catch (NamingException ex) {
+            }
+        }
     }
 
     private boolean setupStreams(int portsIndex, String server) {
@@ -52,25 +72,6 @@ public class Relay {
         return false;
     }
 
-    public void relayMail() {
-
-        String data = session.getData();
-        String from = session.getFrom();
-        List<String> recipients = session.getRecipients();
-
-        for (String recipient : recipients) {
-            try {
-               // if(recipient.contains("@")) need to take care of local relay
-                List<String> mxRecords = new MxRecord(recipient.split("@")[1]).lookupMailHosts();
-                if (mxRecords == null) return;
-                for (String server : mxRecords) {
-                    if (tryConversation(server, recipient)) break;
-                }
-            } catch (NamingException ex) {
-            }
-        }
-    }
-
     private boolean tryConversation(String server, String recipient) {
         for (int i = 0; i < 1; i++) {
             setupStreams(i, server);
@@ -81,11 +82,11 @@ public class Relay {
             commands.add(helo);
             /*Issue MAIL FROM:*/
             SMTPMailCommand mail = new SMTPMailCommand("");
-            mail.setFrom(session.getFrom());
+            mail.setFrom("<" + session.getFrom() + ">");
             commands.add(mail);
             /*Issue RCPT TO:*/
             SMTPRcptCommand rcpt = new SMTPRcptCommand("");
-            rcpt.setTo(recipient);
+            rcpt.setTo("<" + recipient  + ">");
             commands.add(rcpt);
             /*Issue DATA*/
             SMTPDataCommand data = new SMTPDataCommand();
@@ -96,6 +97,7 @@ public class Relay {
             boolean result = executeCommands(commands);
             //closeConnection();
             if (result == true) {
+                session.setShouldSend(false);
                 requestLogger.info("Mail relayed to " + connection.getInetAddress().getHostAddress());
                 return true;
             }

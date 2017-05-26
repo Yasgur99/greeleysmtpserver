@@ -22,7 +22,7 @@ public class SMTPMailCommand implements SMTPCommand {
         if(line.matches("(?i)MAIL FROM:\\s?\\S[a-zA-Z0-9_\\.]*@"+UserDatabase.getDomain()))
             from = line.substring(10,line.indexOf("@")).trim();
         else if (line.matches("(?i)MAIL FROM:\\s?\\S[a-zA-Z0-9_\\.]*")) 
-            from = line.substring(10).trim();
+            from = line.substring(10).trim() + "@"+ UserDatabase.getDomain();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SMTPMailCommand implements SMTPCommand {
             return new SMTPResponse(Codes.SYNTAX_ERROR_PARAMETERS, "Unknown MAIL FROM paramater \""
                     + from.substring(from
                             .indexOf(" ")) + "\".");
-        } else if (UserDatabase.getInstance().containsUser(from)) {
+        } else if (UserDatabase.getInstance().containsUser(from.split("@")[0])) {
             session.setDidSpecifyMailFrom(true);
             session.setFrom(from);
             return new SMTPResponse(Codes.REQUESTED_ACTION_OKAY, "Address Ok.");
@@ -69,6 +69,6 @@ public class SMTPMailCommand implements SMTPCommand {
     
     @Override
     public String toString(){
-        return "MAIL FROM: " + from + "@" + UserDatabase.getDomain() + "\r\n";
+        return "MAIL FROM: " + from + "\r\n";
     }
 }
