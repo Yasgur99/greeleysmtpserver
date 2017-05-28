@@ -18,10 +18,19 @@ public class SMTPRcptCommand implements SMTPCommand {
     private void parse(String line) {
         if (line.matches("(?i)RCPT TO:.*"))
             this.containsColon = true;
-        if (line.matches("(?i)RCPT TO:\\s?\\S.*")) 
+        if (line.matches("(?i)RCPT TO:\\s?<?.*>?")) 
             recipient = line.substring(8).trim();
+        
+        //if it contains carrots, make sure handled correctly
+         if(recipient.contains("<") && !recipient.contains(">") || !recipient.contains("<") && recipient.contains(">"))
+            recipient = null;
+        else{
+            recipient = recipient.replace(">", "");
+            recipient = recipient.replace("<", "");
+        }
     }
     
+    @Override
     public SMTPResponse execute(Session session){
         /*Check to make sure we issued necesarry preceding commands*/
         if (!session.didSayHelo())

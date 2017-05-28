@@ -19,10 +19,18 @@ public class SMTPMailCommand implements SMTPCommand {
     private void parse(String line) {
         if (line.matches("(?i)MAIL FROM:.*"))
             this.containsColon = true;
-        if(line.matches("(?i)MAIL FROM:\\s?\\S[a-zA-Z0-9_\\.]*@"+UserDatabase.getDomain()))
+        if(line.matches("(?i)MAIL FROM:\\s?<?[a-zA-Z0-9_\\.]*@"+UserDatabase.getDomain()+ ">?"))
             from = line.substring(10,line.indexOf("@")).trim();
-        else if (line.matches("(?i)MAIL FROM:\\s?\\S[a-zA-Z0-9_\\.]*")) 
+        else if (line.matches("(?i)MAIL FROM:\\s?<?[a-zA-Z0-9_\\.]*>?")) 
             from = line.substring(10).trim() + "@"+ UserDatabase.getDomain();
+        
+        //check to make sure if it contained carrots, they are handeled correctly
+        if(from.contains("<") && !from.contains(">") || !from.contains("<") && from.contains(">"))
+            from = null;
+        else{
+            from = from.replace(">", "");
+            from = from.replace("<", "");
+        }
     }
 
     @Override
