@@ -39,6 +39,9 @@ public class MessageDatabase extends AbstractDatabase {
                 + "	id integer PRIMARY KEY,\n"
                 + "	mailFrom text NOT NULL,\n"
                 + "	rcptTo text NOT NULL,\n"
+                + "     date text,\n"
+                + "     to text,\n"
+                + "     from text\n"
                 + "     subject text,\n"
                 + "     inResponseTo integer,\n"
                 + "     data text\n"
@@ -55,7 +58,7 @@ public class MessageDatabase extends AbstractDatabase {
 
     @Override
     public void selectAll() {
-        String query = "SELECT id, mailFrom, rcptTo, subject, inResponseTo, data FROM messages";
+        String query = "SELECT id, mailFrom, rcptTo, date, to, from, subject, inResponseTo, data FROM messages";
 
         try (Connection conn = connect();
                 Statement stmt = conn.createStatement();
@@ -63,9 +66,12 @@ public class MessageDatabase extends AbstractDatabase {
             while (rs.next()) {
                 System.out.println(rs.getInt("id") + "\t"
                         + rs.getString("mailFrom") + "\t"
-                        + rs.getString("rcptTo")
-                        + rs.getString("subject")
-                        + rs.getString("inResponseTo")
+                        + rs.getString("rcptTo") + "\t"
+                        + rs.getString("date") + "\t"
+                        + rs.getString("to") + "\t"
+                        + rs.getString("from") + "\t"
+                        + rs.getString("subject") + "\t"
+                        + rs.getString("inResponseTo") + "\t"
                         + rs.getString("data"));
             }
         } catch (SQLException e) {
@@ -74,14 +80,17 @@ public class MessageDatabase extends AbstractDatabase {
     }
 
     public void addMessage(Session session) {
-        String query = "INSERT INTO messages(mailFrom, rcptTo, subject, inResponseTo, data) VALUES(?,?,?,?,?)";
+        String query = "INSERT INTO messages(mailFrom, rcptTo,date,to,from, subject, inResponseTo, data) VALUES(?,?,?,?,?)";
 
         try (Connection conn = connect();
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, session.getFrom());
             pstmt.setString(2, session.getRecipients().toString());//TODO: handle this better
-            pstmt.setString(3, session.getSubject());
-            pstmt.setInt(4, -1); //TODO: implements messsage chains
+            pstmt.setString(3, session.getDate());
+            pstmt.setString(4, session.getTo());
+            pstmt.setString(5, session.getFrom());
+            pstmt.setString(6, session.getSubject());
+            pstmt.setInt(7, -1); //TODO: implements messsage chains
             pstmt.setString(5, session.getData());
             pstmt.executeUpdate();
         } catch (SQLException e) {

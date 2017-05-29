@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +34,7 @@ public class Relay implements Runnable {
         this.session = session;
     }
     
+    /*Gets the MX records of each recipient and attempts to relay the email to the correct user*/
     @Override
     public void run() {
 
@@ -41,6 +43,8 @@ public class Relay implements Runnable {
         List<String> recipients = session.getRecipients();
 
         for (String recipient : recipients) {
+            if(!recipient.contains("@"))//check if they are in our domain
+                continue;
             try {
                // if(recipient.contains("@")) need to take care of local relay
                 List<String> mxRecords = new MxRecord(recipient.split("@")[1]).lookupMailHosts();
@@ -53,6 +57,7 @@ public class Relay implements Runnable {
         }
     }
 
+    /*Open streams from connection*/
     private boolean setupStreams(int portsIndex, String server) {
         try {
             this.connection = new Socket(server, PORTS[portsIndex]);
@@ -72,6 +77,7 @@ public class Relay implements Runnable {
         return false;
     }
 
+    /*Creates a list of the commands that need to be sent to the server and sends them*/
     private boolean tryConversation(String server, String recipient) {
         for (int i = 0; i < 1; i++) {
             setupStreams(i, server);
@@ -105,12 +111,15 @@ public class Relay implements Runnable {
         return false;
     }
 
+    /*Handles the actuall writing of each command to relay*/
     private boolean executeCommands(List<SMTPCommand> commands) {
         getResponse();
         for (SMTPCommand command : commands) {
             /*Execute DATA*/
             if (command.getCommand() == SMTPParser.DATA) {
                 //Wrie initial DATA and see if we are good to start sending data
+                this.out.write("Recieved: from " + UserDatabase.getDomain() +
+                                " by " +UserDatabase.getDomain() + "; " + new Date().toString());
                 this.out.write(command.getCommand().name() + "\r\n");
                 this.out.flush();
                 int response = getResponse();
@@ -134,6 +143,7 @@ public class Relay implements Runnable {
         return false; //never reached
     }
 
+    /*gets the response code from the realay server*/
     private int getResponse() {
         try {
             String response = in.readLine().trim();
@@ -145,6 +155,7 @@ public class Relay implements Runnable {
         return -1;
     }
 
+    /*Close resources*/
     private void closeConnection() {
         try {
             this.in.close();
