@@ -16,22 +16,22 @@ public class SMTPRcptCommand implements SMTPCommand {
 
     // RCPT TO:<yyyy@example.com>
     private void parse(String line) {
+         //check to make sure if it contained carrots, they are handeled correctly
+        if (line.matches("(?i)RCPT TO.*")) {
+            if (!line.contains("<") || line.contains(">") || line.contains("<") || !line.contains(">")){
+                line = line.replace(">", "");
+                line = line.replace("<", "");
+            }
+        }
+        
         if (line.matches("(?i)RCPT TO:.*"))
             this.containsColon = true;
-        if (line.matches("(?i)RCPT TO:\\s?<?.*>?")) 
+        if (line.matches("(?i)RCPT TO:\\s?<?.*>?"))
             recipient = line.substring(8).trim();
-        
-        //if it contains carrots, make sure handled correctly
-         if(recipient.contains("<") && !recipient.contains(">") || !recipient.contains("<") && recipient.contains(">"))
-            recipient = null;
-        else{
-            recipient = recipient.replace(">", "");
-            recipient = recipient.replace("<", "");
-        }
     }
-    
+
     @Override
-    public SMTPResponse execute(Session session){
+    public SMTPResponse execute(Session session) {
         /*Check to make sure we issued necesarry preceding commands*/
         if (!session.didSayHelo())
             return new SMTPResponse(Codes.BAD_SEQUENCE, "HELO was never issued.");
@@ -61,13 +61,13 @@ public class SMTPRcptCommand implements SMTPCommand {
     public String getRecipient() {
         return recipient;
     }
-    
-    public void setTo(String recipient){
+
+    public void setTo(String recipient) {
         this.recipient = recipient;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "RCPT TO: " + recipient + "\r\n";
     }
 }

@@ -118,9 +118,9 @@ public class Relay implements Runnable {
             /*Execute DATA*/
             if (command.getCommand() == SMTPParser.DATA) {
                 //Wrie initial DATA and see if we are good to start sending data
+                this.out.write(command.getCommand().name() + "\r\n");
                 this.out.write("Recieved: from " + UserDatabase.getDomain() +
                                 " by " +UserDatabase.getDomain() + "; " + new Date().toString());
-                this.out.write(command.getCommand().name() + "\r\n");
                 this.out.flush();
                 int response = getResponse();
                 if (response == Codes.START_MAIL_INPUT){ // response was good so we can write message

@@ -10,7 +10,7 @@ import javax.naming.directory.InitialDirContext;
 
 public class MxRecord {
 
-    private String domain;
+    private final String domain;
 
     public MxRecord(String domain) {
         this.domain = domain;
@@ -41,7 +41,7 @@ public class MxRecord {
         Arrays.sort(pvhn, (String[] o1, String[] o2) -> (Integer.parseInt(o1[0]) - Integer.parseInt(o2[0])));
 
         // put sorted host names in an array, get rid of any trailing '.' 
-        List<String> sortedHostNames = new ArrayList<String>();
+        List<String> sortedHostNames = new ArrayList<>();
         for (int i = 0; i < pvhn.length; i++) {
             if (pvhn[i][1].endsWith("."))
                 sortedHostNames.add(pvhn[i][1].substring(0, pvhn[i][1].length() - 1));

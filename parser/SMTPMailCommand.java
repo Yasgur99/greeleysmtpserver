@@ -17,20 +17,21 @@ public class SMTPMailCommand implements SMTPCommand {
 
     // MAIL FROM:<yyyy@example.com>
     private void parse(String line) {
+        //check to make sure if it contained carrots, they are handeled correctly
+        if (line.matches("(?i)MAIL FROM.*")) {
+            if (!line.contains("<") || line.contains(">") || line.contains("<") || !line.contains(">")){
+                line = line.replace(">", "");
+                line = line.replace("<", "");
+            }
+        }
+
         if (line.matches("(?i)MAIL FROM:.*"))
             this.containsColon = true;
-        if(line.matches("(?i)MAIL FROM:\\s?<?[a-zA-Z0-9_\\.]*@"+UserDatabase.getDomain()+ ">?"))
-            from = line.substring(10,line.indexOf("@")).trim();
-        else if (line.matches("(?i)MAIL FROM:\\s?<?[a-zA-Z0-9_\\.]*>?")) 
-            from = line.substring(10).trim() + "@"+ UserDatabase.getDomain();
-        
-        //check to make sure if it contained carrots, they are handeled correctly
-        if(from.contains("<") && !from.contains(">") || !from.contains("<") && from.contains(">"))
-            from = null;
-        else{
-            from = from.replace(">", "");
-            from = from.replace("<", "");
-        }
+        if (line.matches("(?i)MAIL FROM:\\s?<?[a-zA-Z0-9_\\.]*@" + UserDatabase.getDomain() + ">?"))
+            from = line.substring(10, line.indexOf("@")).trim();
+        else if (line.matches("(?i)MAIL FROM:\\s?<?[a-zA-Z0-9_\\.]*>?"))
+            from = line.substring(10).trim() + "@" + UserDatabase.getDomain();
+
     }
 
     @Override
@@ -70,13 +71,13 @@ public class SMTPMailCommand implements SMTPCommand {
     public String getFrom() {
         return from;
     }
-    
-    public void setFrom(String from){
+
+    public void setFrom(String from) {
         this.from = from;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "MAIL FROM: " + from + "\r\n";
     }
 }

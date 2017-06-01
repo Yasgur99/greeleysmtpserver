@@ -40,8 +40,8 @@ public class MessageDatabase extends AbstractDatabase {
                 + "	mailFrom text NOT NULL,\n"
                 + "	rcptTo text NOT NULL,\n"
                 + "     date text,\n"
-                + "     to text,\n"
-                + "     from text\n"
+                + "     dataTo text,\n"
+                + "     dataFrom text,\n"
                 + "     subject text,\n"
                 + "     inResponseTo integer,\n"
                 + "     data text\n"
@@ -58,7 +58,7 @@ public class MessageDatabase extends AbstractDatabase {
 
     @Override
     public void selectAll() {
-        String query = "SELECT id, mailFrom, rcptTo, date, to, from, subject, inResponseTo, data FROM messages";
+        String query = "SELECT id, mailFrom, rcptTo, date, dataTo, dataFrom, subject, inResponseTo, data FROM messages";
 
         try (Connection conn = connect();
                 Statement stmt = conn.createStatement();
@@ -68,8 +68,8 @@ public class MessageDatabase extends AbstractDatabase {
                         + rs.getString("mailFrom") + "\t"
                         + rs.getString("rcptTo") + "\t"
                         + rs.getString("date") + "\t"
-                        + rs.getString("to") + "\t"
-                        + rs.getString("from") + "\t"
+                        + rs.getString("dataTo") + "\t"
+                        + rs.getString("dataFrom") + "\t"
                         + rs.getString("subject") + "\t"
                         + rs.getString("inResponseTo") + "\t"
                         + rs.getString("data"));
@@ -80,7 +80,7 @@ public class MessageDatabase extends AbstractDatabase {
     }
 
     public void addMessage(Session session) {
-        String query = "INSERT INTO messages(mailFrom, rcptTo,date,to,from, subject, inResponseTo, data) VALUES(?,?,?,?,?)";
+        String query = "INSERT INTO messages(mailFrom, rcptTo, date, dataTo, dataFrom, subject, inResponseTo, data) VALUES(?,?,?,?,?,?,?,?)";
 
         try (Connection conn = connect();
                 PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -91,7 +91,7 @@ public class MessageDatabase extends AbstractDatabase {
             pstmt.setString(5, session.getFrom());
             pstmt.setString(6, session.getSubject());
             pstmt.setInt(7, -1); //TODO: implements messsage chains
-            pstmt.setString(5, session.getData());
+            pstmt.setString(8, session.getData());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
