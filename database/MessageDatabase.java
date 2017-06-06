@@ -11,6 +11,7 @@ import java.sql.Statement;
 /**
  * @author michaelmaitland
  */
+
 public class MessageDatabase extends AbstractDatabase {
 
     private static MessageDatabase messageDatabase = null;

@@ -1,4 +1,3 @@
-
 package greeleysmtpserver.server;
 
 import java.util.concurrent.ExecutorService;

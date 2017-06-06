@@ -27,12 +27,20 @@ public class Main {
         server.start();
     }
     
-    public static void addDummyUsers(UserDatabase userDB){
+    public static void addDummyUsers(UserDatabase userDB) {
         userDB.add("michaelmaitland", "password");
         userDB.add("avisaven", "password1");
         userDB.add("jamiescharf", "lolUWillNeverGuess");
         userDB.add("bjornchen", "madHax3r");
         userDB.add("aditi", "lmao123");
         userDB.add("maxauerbaccher", "laugh");
+        userDB.add("jahoward", "communism12");
+        userDB.add("henryjefff", "tetris");
+        userDB.add("mizhou", "peoplesrepublic");
+        userDB.add("fatalcubez", "themaster");
+        userDB.add("rol", "squadmaster");
+        userDB.add("kevchang", "whatsgoingon");
+        userDB.add("kphil", "minecraft");
+        userDB.add("davidgarcia", "cherrygarcia");
     }
 }

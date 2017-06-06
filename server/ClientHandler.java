@@ -1,13 +1,11 @@
 package greeleysmtpserver.server;
 
-import greeleysmtpserver.database.MessageDatabase;
 import greeleysmtpserver.database.UserDatabase;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 import greeleysmtpserver.parser.*;
 import greeleysmtpserver.responder.*;
-import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -1,11 +1,5 @@
 package greeleysmtpserver.parser;
 
-import greeleysmtpserver.responder.Codes;
-import greeleysmtpserver.responder.SMTPResponse;
-import greeleysmtpserver.server.Session;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 /**
  * @author michaelmaitland
  */

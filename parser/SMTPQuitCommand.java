@@ -1,4 +1,3 @@
-
 package greeleysmtpserver.parser;
 
 import greeleysmtpserver.responder.Codes;

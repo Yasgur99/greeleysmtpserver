@@ -1,5 +1,5 @@
-
 package greeleysmtpserver.responder;
+
 /**
  * @author michaelmaitland
  */

@@ -1,7 +1,5 @@
 package greeleysmtpserver.server;
 
-import greeleysmtpserver.parser.SMTPCommand;
-import greeleysmtpserver.responder.SMTPResponse;
 import java.util.ArrayList;
 import java.util.List;
 

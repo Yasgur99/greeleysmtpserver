@@ -3,15 +3,13 @@ package greeleysmtpserver.database;
 /**
  * @author michaelmaitland
  */
+
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

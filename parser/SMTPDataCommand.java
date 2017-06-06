@@ -3,7 +3,6 @@ package greeleysmtpserver.parser;
 import greeleysmtpserver.database.MessageDatabase;
 import greeleysmtpserver.responder.Codes;
 import greeleysmtpserver.responder.SMTPResponse;
-import greeleysmtpserver.server.Relay;
 import greeleysmtpserver.server.Session;
 
 public class SMTPDataCommand implements SMTPCommand {
