@@ -34,7 +34,6 @@ public class Main {
         userDB.add("bjornchen", "madHax3r");
         userDB.add("aditi", "lmao123");
         userDB.add("maxauerbaccher", "laugh");
-        userDB.add("jahoward", "communism12");
         userDB.add("henryjefff", "tetris");
         userDB.add("mizhou", "peoplesrepublic");
         userDB.add("fatalcubez", "themaster");

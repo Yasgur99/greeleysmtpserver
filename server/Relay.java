@@ -33,7 +33,7 @@ public class Relay implements Runnable {
     public Relay(Session session) {
         this.session = session;
     }
-    
+
     /*Gets the MX records of each recipient and attempts to relay the email to the correct user*/
     @Override
     public void run() {
@@ -43,10 +43,10 @@ public class Relay implements Runnable {
         List<String> recipients = session.getRecipients();
 
         for (String recipient : recipients) {
-            if(!recipient.contains("@"))//check if they are in our domain
+            if (!recipient.contains("@"))//check if they are in our domain
                 continue;
             try {
-               // if(recipient.contains("@")) need to take care of local relay
+                // if(recipient.contains("@")) need to take care of local relay
                 List<String> mxRecords = new MxRecord(recipient.split("@")[1]).lookupMailHosts();
                 if (mxRecords == null) return;
                 for (String server : mxRecords) {
@@ -92,7 +92,7 @@ public class Relay implements Runnable {
             commands.add(mail);
             /*Issue RCPT TO:*/
             SMTPRcptCommand rcpt = new SMTPRcptCommand("");
-            rcpt.setTo("<" + recipient  + ">");
+            rcpt.setTo("<" + recipient + ">");
             commands.add(rcpt);
             /*Issue DATA*/
             SMTPDataCommand data = new SMTPDataCommand();
@@ -105,9 +105,11 @@ public class Relay implements Runnable {
             if (result == true) {
                 session.setShouldSend(false);
                 requestLogger.info("Mail relayed to " + connection.getInetAddress().getHostAddress());
+                requestLogger.info("Connection closed with relay " + connection.getInetAddress().getHostAddress());
                 return true;
             }
         }
+        requestLogger.info("Connection closed with relay " + connection.getInetAddress().getHostAddress());
         return false;
     }
 
@@ -119,15 +121,14 @@ public class Relay implements Runnable {
             if (command.getCommand() == SMTPParser.DATA) {
                 //Wrie initial DATA and see if we are good to start sending data
                 this.out.write(command.getCommand().name() + "\r\n");
-                this.out.write("Recieved: from " + UserDatabase.getDomain() +
-                                " by " +UserDatabase.getDomain() + "; " + new Date().toString());
                 this.out.flush();
                 int response = getResponse();
-                if (response == Codes.START_MAIL_INPUT){ // response was good so we can write message
+                if (response == Codes.START_MAIL_INPUT) { // response was good so we can write message
+                    this.out.write("Recieved: from " + UserDatabase.getDomain()
+                            + " by " + UserDatabase.getDomain() + "; " + new Date().toString());
                     this.out.write(session.getData() + "\r\n.\r\n");
                     this.out.flush();
-                }
-                else
+                } else
                     return false;
 
                 response = getResponse();
